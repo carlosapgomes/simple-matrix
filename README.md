@@ -34,6 +34,22 @@ Optional Cinny branding:
 
 Security best practice: store secrets in Ansible Vault rather than plaintext.
 
+## Using Ansible Vault (Recommended)
+
+This project includes long‑lived secrets (admin password, DB password, tunnel token). Even for a single-use deployment, it is safer to store them encrypted.
+
+Encrypt your inventory variables:
+
+```bash
+ansible-vault encrypt group_vars/all.yml
+```
+
+Run the playbook:
+
+```bash
+ansible-playbook -i inventory.yml playbook.yml --ask-vault-pass
+```
+
 ## Cloudflare Tunnel Setup (Token)
 
 This project expects a pre-created Cloudflare Tunnel and uses the tunnel token only.
@@ -59,6 +75,12 @@ Security best practice:
 
 ```bash
 ansible-playbook -i inventory.yml playbook.yml
+```
+
+If you encrypted `group_vars/all.yml`, use:
+
+```bash
+ansible-playbook -i inventory.yml playbook.yml --ask-vault-pass
 ```
 
 ## Running With Sudo User vs Root
