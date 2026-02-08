@@ -23,6 +23,7 @@ docker_rootless: true
 docker_compose_project: matrix
 
 synapse_image: docker.io/matrixdotorg/synapse:latest
+synapse_container_user: "0:0"
 postgres_image: docker.io/postgres:16
 nginx_image: docker.io/nginx:stable
 synapse_admin_image: docker.io/etkecc/synapse-admin:latest
