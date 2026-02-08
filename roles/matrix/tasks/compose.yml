@@ -39,7 +39,11 @@
     HOME: "{{ matrix_home }}"
 
 - name: Build Cinny image if missing
-  ansible.builtin.command: docker compose -p {{ docker_compose_project }} build cinny
+  ansible.builtin.command: >-
+    docker compose
+    -f {{ matrix_home }}/docker-compose.yml
+    -p {{ docker_compose_project }}
+    build cinny
   when: cinny_image_check.rc != 0
   args:
     chdir: "{{ matrix_home }}"
@@ -65,7 +69,11 @@
     HOME: "{{ matrix_home }}"
 
 - name: Build backup image if missing
-  ansible.builtin.command: docker compose -p {{ docker_compose_project }} build backup
+  ansible.builtin.command: >-
+    docker compose
+    -f {{ matrix_home }}/docker-compose.yml
+    -p {{ docker_compose_project }}
+    build backup
   when: backup_image_check.rc != 0
   args:
     chdir: "{{ matrix_home }}"
@@ -77,7 +85,11 @@
     HOME: "{{ matrix_home }}"
 
 - name: Start matrix stack
-  ansible.builtin.command: docker compose -p {{ docker_compose_project }} up -d
+  ansible.builtin.command: >-
+    docker compose
+    -f {{ matrix_home }}/docker-compose.yml
+    -p {{ docker_compose_project }}
+    up -d
   changed_when: false
   args:
     chdir: "{{ matrix_home }}"
@@ -89,7 +101,11 @@
     HOME: "{{ matrix_home }}"
 
 - name: Check nginx published port
-  ansible.builtin.command: docker compose -p {{ docker_compose_project }} port nginx 80
+  ansible.builtin.command: >-
+    docker compose
+    -f {{ matrix_home }}/docker-compose.yml
+    -p {{ docker_compose_project }}
+    port nginx 80
   register: nginx_port
   failed_when: false
   changed_when: false
@@ -103,7 +119,11 @@
     HOME: "{{ matrix_home }}"
 
 - name: Recreate nginx if port publishing is missing
-  ansible.builtin.command: docker compose -p {{ docker_compose_project }} up -d --force-recreate nginx
+  ansible.builtin.command: >-
+    docker compose
+    -f {{ matrix_home }}/docker-compose.yml
+    -p {{ docker_compose_project }}
+    up -d --force-recreate nginx
   when: nginx_port.rc != 0 or (nginx_port.stdout | trim | regex_search('8080$')) is none
   changed_when: false
   args:
@@ -116,7 +136,11 @@
     HOME: "{{ matrix_home }}"
 
 - name: Verify nginx published port
-  ansible.builtin.command: docker compose -p {{ docker_compose_project }} port nginx 80
+  ansible.builtin.command: >-
+    docker compose
+    -f {{ matrix_home }}/docker-compose.yml
+    -p {{ docker_compose_project }}
+    port nginx 80
   register: nginx_port_verified
   failed_when: false
   changed_when: false
@@ -148,7 +172,10 @@
 
 - name: Check if admin user exists
   ansible.builtin.command: >-
-    docker compose -p {{ docker_compose_project }} exec -T postgres
+    docker compose
+    -f {{ matrix_home }}/docker-compose.yml
+    -p {{ docker_compose_project }}
+    exec -T postgres
     psql -U {{ postgres_user }} -d {{ postgres_db }} -tAc
     "SELECT 1 FROM users WHERE name='@{{ matrix_admin_user }}:{{ matrix_fqdn }}';"
   register: admin_exists
@@ -162,7 +189,10 @@
 
 - name: Create admin user if missing
   ansible.builtin.command: >-
-    docker compose -p {{ docker_compose_project }} exec -T synapse
+    docker compose
+    -f {{ matrix_home }}/docker-compose.yml
+    -p {{ docker_compose_project }}
+    exec -T synapse
     register_new_matrix_user
     -c /data/homeserver.yaml
     -u "{{ matrix_admin_user }}"
