@@ -9,6 +9,7 @@
       - openssl
       - uidmap
       - dbus-user-session
+      - slirp4netns
       - git
       - jq
       - ufw
