@@ -110,6 +110,10 @@ Optional Docker rootless tuning:
 - `docker_rootlesskit_port_driver` (default: `builtin`)
 - `matrix_network_internal` (default: `false`)
 
+Optional Synapse Admin tuning:
+
+- `synapse_admin_upstream_port` (default: `8080`, set `80` if using older image variants)
+
 Security best practice: store secrets in Ansible Vault rather than plaintext.
 
 ## Using Ansible Vault (Recommended)

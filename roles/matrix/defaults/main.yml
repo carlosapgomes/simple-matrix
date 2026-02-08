@@ -38,6 +38,7 @@ synapse_container_user: "{{ synapse_container_uid }}:{{ synapse_container_gid }}
 postgres_image: docker.io/postgres:16
 nginx_image: docker.io/nginx:stable
 synapse_admin_image: docker.io/etkecc/synapse-admin:latest
+synapse_admin_upstream_port: 8080
 cloudflared_image: docker.io/cloudflare/cloudflared:latest
 backup_image: docker.io/alpine:3.19
 backup_image_local: matrix-backup:latest

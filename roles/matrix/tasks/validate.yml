@@ -33,3 +33,10 @@
       matrix_network_internal=true is incompatible with this role because nginx
       must publish host port 8080 for local health checks and Cloudflare tunnel
       forwarding.
+
+- name: Validate Synapse Admin upstream port
+  ansible.builtin.assert:
+    that:
+      - synapse_admin_upstream_port | int > 0
+      - synapse_admin_upstream_port | int < 65536
+    fail_msg: "synapse_admin_upstream_port must be between 1 and 65535."
