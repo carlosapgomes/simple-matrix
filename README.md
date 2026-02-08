@@ -154,6 +154,7 @@ Security best practice:
 
 - All services run under `/opt/matrix` and are owned by the `matrix` user.
 - Only nginx is published on host port `8080`; host firewall policy keeps external access blocked.
+- Rootless Docker daemon listens on a Unix socket (`/run/user/<uid>/docker.sock`), not a TCP port.
 - Cloudflare handles TLS; nginx runs without SSL locally.
 - Cloudflared runs as a systemd service and forwards `https://chat.hospital.example` to `http://localhost:8080`.
 - Backups are stored under `/opt/matrix/backups`.
@@ -172,3 +173,4 @@ Security best practice:
 - Check systemd status: `systemctl status cloudflared-matrix`
 - Check rootless Docker: `sudo -u matrix systemctl --user status docker`
 - Check containers: `sudo -u matrix docker compose -f /opt/matrix/docker-compose.yml ps`
+- Check nginx published port: `sudo -u matrix XDG_RUNTIME_DIR=/run/user/$(id -u matrix) DOCKER_HOST=unix:///run/user/$(id -u matrix)/docker.sock docker compose -f /opt/matrix/docker-compose.yml -p matrix port nginx 80`

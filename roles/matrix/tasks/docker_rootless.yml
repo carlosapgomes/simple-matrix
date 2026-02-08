@@ -40,15 +40,12 @@
     mode: "0755"
 
 - name: Configure rootless Docker networking drivers
-  ansible.builtin.copy:
+  ansible.builtin.template:
+    src: docker-rootless.override.conf.j2
     dest: "{{ matrix_home }}/.config/systemd/user/docker.service.d/override.conf"
     owner: "{{ matrix_user }}"
     group: "{{ matrix_user }}"
     mode: "0644"
-    content: |
-      [Service]
-      Environment=DOCKERD_ROOTLESS_ROOTLESSKIT_NET={{ docker_rootlesskit_net_driver }}
-      Environment=DOCKERD_ROOTLESS_ROOTLESSKIT_PORT_DRIVER={{ docker_rootlesskit_port_driver }}
   register: rootless_override
 
 - name: Reload rootless Docker user service definitions

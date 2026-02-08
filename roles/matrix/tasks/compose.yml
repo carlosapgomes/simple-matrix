@@ -158,7 +158,10 @@
     that:
       - nginx_port_verified.rc == 0
       - (nginx_port_verified.stdout | trim | regex_search('8080$')) is not none
-    fail_msg: "nginx is not publishing port 8080 from Docker Compose."
+    fail_msg: >-
+      nginx is not publishing port 8080 from Docker Compose
+      (rc={{ nginx_port_verified.rc }}, stdout='{{ nginx_port_verified.stdout | default('') | trim }}',
+      stderr='{{ nginx_port_verified.stderr | default('') | trim }}').
 
 - name: Wait for Synapse to respond
   ansible.builtin.uri:

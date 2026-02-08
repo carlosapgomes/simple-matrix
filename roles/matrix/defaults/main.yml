@@ -28,7 +28,7 @@ synapse_host_gid: "{{ (matrix_subuid_start | int) + (synapse_container_gid | int
 docker_rootless: true
 docker_compose_project: matrix
 docker_rootlesskit_net_driver: slirp4netns
-docker_rootlesskit_port_driver: slirp4netns
+docker_rootlesskit_port_driver: builtin
 
 synapse_image: docker.io/matrixdotorg/synapse:latest
 synapse_container_user: "{{ synapse_container_uid }}:{{ synapse_container_gid }}"
