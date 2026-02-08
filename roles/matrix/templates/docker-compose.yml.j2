@@ -48,8 +48,10 @@ services:
 
   cinny:
     image: {{ cinny_image }}
+{% if cinny_build_from_source | bool %}
     build:
       context: ./cinny/src
+{% endif %}
     volumes:
       - "{{ matrix_home }}/cinny/config.json:/usr/share/nginx/html/config.json:ro"
       - "{{ matrix_home }}/cinny/custom:/usr/share/nginx/html/custom:ro"

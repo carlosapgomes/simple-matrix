@@ -38,7 +38,13 @@ synapse_admin_image: docker.io/etkecc/synapse-admin:latest
 cloudflared_image: docker.io/cloudflare/cloudflared:latest
 backup_image: docker.io/alpine:3.19
 backup_image_local: matrix-backup:latest
-cinny_image: cinny:local
+
+# Cinny deployment mode
+# By default, use the upstream prebuilt image for reliability.
+cinny_build_from_source: false
+cinny_image_prebuilt: ghcr.io/cinnyapp/cinny:latest
+cinny_image_local: cinny:local
+cinny_image: "{{ cinny_image_local if (cinny_build_from_source | bool) else cinny_image_prebuilt }}"
 
 cinny_repo: https://github.com/cinnyapp/cinny.git
 cinny_version: v4.10.2

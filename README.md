@@ -97,6 +97,12 @@ Optional Cinny branding:
 - `cinny_custom_background_path`
 - `cinny_landing_text`
 
+Optional Cinny source-build mode:
+
+- `cinny_build_from_source` (default: `false`)
+- `cinny_image_prebuilt` (default: `ghcr.io/cinnyapp/cinny:latest`)
+- `cinny_image_local` (default: `cinny:local`)
+
 Security best practice: store secrets in Ansible Vault rather than plaintext.
 
 ## Using Ansible Vault (Recommended)

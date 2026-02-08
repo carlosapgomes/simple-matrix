@@ -5,6 +5,7 @@
     dest: "{{ cinny_build_dir }}"
     version: "{{ cinny_version }}"
     force: false
+  when: cinny_build_from_source | bool
   become: true
   become_user: "{{ matrix_user }}"
 
@@ -29,6 +30,7 @@
   register: cinny_image_check
   failed_when: false
   changed_when: false
+  when: cinny_build_from_source | bool
   args:
     chdir: "{{ matrix_home }}"
   become: true
@@ -44,7 +46,11 @@
     -f {{ matrix_home }}/docker-compose.yml
     -p {{ docker_compose_project }}
     build cinny
-  when: cinny_image_check.rc != 0
+  when: cinny_build_from_source | bool and cinny_image_check.rc != 0
+  register: cinny_build_result
+  retries: 3
+  delay: 10
+  until: cinny_build_result.rc == 0
   args:
     chdir: "{{ matrix_home }}"
   become: true
