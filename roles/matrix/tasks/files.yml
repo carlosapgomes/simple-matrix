@@ -115,6 +115,14 @@
     mode: "0640"
   no_log: true
 
+- name: Render Synapse logging config in data directory
+  ansible.builtin.template:
+    src: synapse.log.config.j2
+    dest: "{{ matrix_data_dir }}/synapse/log.config"
+    owner: "{{ synapse_host_uid }}"
+    group: "{{ synapse_host_gid }}"
+    mode: "0644"
+
 - name: Render nginx config
   ansible.builtin.template:
     src: nginx.conf.j2

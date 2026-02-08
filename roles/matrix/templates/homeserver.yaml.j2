@@ -4,6 +4,9 @@ public_baseurl: "{{ matrix_public_baseurl }}"
 
 federation_enabled: false
 allow_public_rooms_over_federation: false
+suppress_key_server_warning: true
+trusted_key_servers:
+  - server_name: "matrix.org"
 
 pid_file: /data/homeserver.pid
 signing_key_path: /data/{{ matrix_fqdn }}.signing.key
