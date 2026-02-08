@@ -47,6 +47,7 @@ cinny_custom_background_path: ""
 
 postgres_db: synapse
 postgres_user: synapse
+postgres_initdb_args: "--encoding=UTF8 --locale=C"
 
 backup_time: "03:00"
 backup_timezone: "UTC"
