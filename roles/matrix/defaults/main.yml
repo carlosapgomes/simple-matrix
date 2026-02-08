@@ -1,0 +1,45 @@
+---
+# Required variables are validated in tasks/validate.yml
+
+matrix_user: matrix
+matrix_home: /opt/matrix
+matrix_uid: 987
+matrix_gid: 987
+matrix_shell: /usr/sbin/nologin
+
+matrix_data_dir: "{{ matrix_home }}/data"
+matrix_backup_dir: "{{ matrix_home }}/backups"
+
+# Docker / Compose
+docker_rootless: true
+docker_compose_project: matrix
+
+synapse_image: docker.io/matrixdotorg/synapse:latest
+postgres_image: docker.io/postgres:16
+nginx_image: docker.io/nginx:stable
+synapse_admin_image: docker.io/etkecc/synapse-admin:latest
+cloudflared_image: docker.io/cloudflare/cloudflared:latest
+backup_image: docker.io/alpine:3.19
+backup_image_local: matrix-backup:latest
+cinny_image: cinny:local
+
+cinny_repo: https://github.com/cinnyapp/cinny.git
+cinny_version: master
+cinny_build_dir: "{{ matrix_home }}/cinny/src"
+cinny_landing_text: "Hospital Internal Messaging"
+cinny_custom_logo_path: ""
+cinny_custom_background_path: ""
+
+postgres_db: synapse
+postgres_user: synapse
+
+backup_time: "03:00"
+backup_timezone: "UTC"
+
+firewall_backend: ufw
+firewall_allow_ssh: true
+firewall_ssh_port: 22
+
+# Derived
+matrix_synapse_server_name: "{{ matrix_fqdn }}"
+matrix_public_baseurl: "https://{{ matrix_fqdn }}/"

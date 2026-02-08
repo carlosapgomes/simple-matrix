@@ -1,0 +1,11 @@
+---
+matrix_required_vars:
+  - matrix_fqdn
+  - matrix_instance_name
+  - matrix_admin_user
+  - matrix_admin_password
+  - postgres_password
+  - cloudflare_tunnel_token
+  - matrix_retention_days
+  - backup_retention_days
+

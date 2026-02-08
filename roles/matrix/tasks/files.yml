@@ -1,0 +1,173 @@
+---
+- name: Ensure secrets directory exists
+  ansible.builtin.file:
+    path: "{{ matrix_home }}/.secrets"
+    state: directory
+    owner: "{{ matrix_user }}"
+    group: "{{ matrix_user }}"
+    mode: "0700"
+
+- name: Persist provided synapse macaroon secret key
+  ansible.builtin.copy:
+    dest: "{{ matrix_home }}/.secrets/macaroon_secret_key"
+    content: "{{ synapse_macaroon_secret_key }}"
+    owner: "{{ matrix_user }}"
+    group: "{{ matrix_user }}"
+    mode: "0600"
+  when: synapse_macaroon_secret_key is defined and synapse_macaroon_secret_key | string | length > 0
+  no_log: true
+
+- name: Generate synapse macaroon secret key if missing
+  ansible.builtin.command: "openssl rand -hex 32"
+  register: macaroon_gen
+  args:
+    creates: "{{ matrix_home }}/.secrets/macaroon_secret_key"
+  changed_when: macaroon_gen.rc == 0
+  when: synapse_macaroon_secret_key is not defined or synapse_macaroon_secret_key | string | length == 0
+  no_log: true
+
+- name: Persist generated synapse macaroon secret key
+  ansible.builtin.copy:
+    dest: "{{ matrix_home }}/.secrets/macaroon_secret_key"
+    content: "{{ macaroon_gen.stdout }}"
+    owner: "{{ matrix_user }}"
+    group: "{{ matrix_user }}"
+    mode: "0600"
+  when: macaroon_gen is changed
+  no_log: true
+
+- name: Persist provided registration shared secret
+  ansible.builtin.copy:
+    dest: "{{ matrix_home }}/.secrets/registration_shared_secret"
+    content: "{{ synapse_registration_shared_secret }}"
+    owner: "{{ matrix_user }}"
+    group: "{{ matrix_user }}"
+    mode: "0600"
+  when: synapse_registration_shared_secret is defined and synapse_registration_shared_secret | string | length > 0
+  no_log: true
+
+- name: Generate registration shared secret if missing
+  ansible.builtin.command: "openssl rand -hex 32"
+  register: reg_gen
+  args:
+    creates: "{{ matrix_home }}/.secrets/registration_shared_secret"
+  changed_when: reg_gen.rc == 0
+  when: synapse_registration_shared_secret is not defined or synapse_registration_shared_secret | string | length == 0
+  no_log: true
+
+- name: Persist generated registration shared secret
+  ansible.builtin.copy:
+    dest: "{{ matrix_home }}/.secrets/registration_shared_secret"
+    content: "{{ reg_gen.stdout }}"
+    owner: "{{ matrix_user }}"
+    group: "{{ matrix_user }}"
+    mode: "0600"
+  when: reg_gen is changed
+  no_log: true
+
+- name: Load synapse macaroon secret key
+  ansible.builtin.slurp:
+    src: "{{ matrix_home }}/.secrets/macaroon_secret_key"
+  register: macaroon_secret_raw
+  no_log: true
+
+- name: Load synapse registration shared secret
+  ansible.builtin.slurp:
+    src: "{{ matrix_home }}/.secrets/registration_shared_secret"
+  register: registration_secret_raw
+  no_log: true
+
+- name: Set synapse secret facts
+  ansible.builtin.set_fact:
+    synapse_macaroon_secret_key: "{{ macaroon_secret_raw.content | b64decode | trim }}"
+    synapse_registration_shared_secret: "{{ registration_secret_raw.content | b64decode | trim }}"
+  no_log: true
+
+- name: Parse backup time
+  ansible.builtin.set_fact:
+    backup_cron_hour: "{{ (backup_time.split(':'))[0] }}"
+    backup_cron_minute: "{{ (backup_time.split(':'))[1] }}"
+
+- name: Render environment file
+  ansible.builtin.template:
+    src: env.j2
+    dest: "{{ matrix_home }}/.env"
+    owner: "{{ matrix_user }}"
+    group: "{{ matrix_user }}"
+    mode: "0600"
+  no_log: true
+
+- name: Render Synapse config
+  ansible.builtin.template:
+    src: homeserver.yaml.j2
+    dest: "{{ matrix_home }}/homeserver.yaml"
+    owner: "{{ matrix_user }}"
+    group: "{{ matrix_user }}"
+    mode: "0640"
+  no_log: true
+
+- name: Render nginx config
+  ansible.builtin.template:
+    src: nginx.conf.j2
+    dest: "{{ matrix_home }}/nginx/nginx.conf"
+    owner: "{{ matrix_user }}"
+    group: "{{ matrix_user }}"
+    mode: "0644"
+
+- name: Render Cinny config
+  ansible.builtin.template:
+    src: cinny.config.json.j2
+    dest: "{{ matrix_home }}/cinny/config.json"
+    owner: "{{ matrix_user }}"
+    group: "{{ matrix_user }}"
+    mode: "0644"
+
+- name: Copy Cinny custom logo (optional)
+  ansible.builtin.copy:
+    src: "{{ cinny_custom_logo_path }}"
+    dest: "{{ matrix_home }}/cinny/custom/logo.png"
+    owner: "{{ matrix_user }}"
+    group: "{{ matrix_user }}"
+    mode: "0644"
+  when: cinny_custom_logo_path is defined and cinny_custom_logo_path | string | length > 0
+
+- name: Copy Cinny custom background (optional)
+  ansible.builtin.copy:
+    src: "{{ cinny_custom_background_path }}"
+    dest: "{{ matrix_home }}/cinny/custom/background.png"
+    owner: "{{ matrix_user }}"
+    group: "{{ matrix_user }}"
+    mode: "0644"
+  when: cinny_custom_background_path is defined and cinny_custom_background_path | string | length > 0
+
+- name: Render docker-compose file
+  ansible.builtin.template:
+    src: docker-compose.yml.j2
+    dest: "{{ matrix_home }}/docker-compose.yml"
+    owner: "{{ matrix_user }}"
+    group: "{{ matrix_user }}"
+    mode: "0644"
+
+- name: Render backup Dockerfile
+  ansible.builtin.template:
+    src: backup.Dockerfile.j2
+    dest: "{{ matrix_home }}/backup/Dockerfile"
+    owner: "{{ matrix_user }}"
+    group: "{{ matrix_user }}"
+    mode: "0644"
+
+- name: Render backup script
+  ansible.builtin.template:
+    src: backup.sh.j2
+    dest: "{{ matrix_home }}/backup/backup.sh"
+    owner: "{{ matrix_user }}"
+    group: "{{ matrix_user }}"
+    mode: "0750"
+
+- name: Render backup crontab
+  ansible.builtin.template:
+    src: backup.crontab.j2
+    dest: "{{ matrix_home }}/backup/crontab"
+    owner: "{{ matrix_user }}"
+    group: "{{ matrix_user }}"
+    mode: "0644"

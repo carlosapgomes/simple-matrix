@@ -1,0 +1,48 @@
+---
+- name: Ensure cloudflared config directory exists
+  ansible.builtin.file:
+    path: /etc/cloudflared
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+
+- name: Write cloudflared environment file
+  ansible.builtin.copy:
+    dest: /etc/cloudflared/cloudflared.env
+    content: "TUNNEL_TOKEN={{ cloudflare_tunnel_token }}\n"
+    owner: root
+    group: root
+    mode: "0600"
+  notify: Restart cloudflared
+  no_log: true
+
+- name: Install cloudflared systemd service
+  ansible.builtin.copy:
+    dest: /etc/systemd/system/cloudflared-matrix.service
+    owner: root
+    group: root
+    mode: "0644"
+    content: |
+      [Unit]
+      Description=Cloudflare Tunnel (Matrix)
+      After=network-online.target
+      Wants=network-online.target
+
+      [Service]
+      EnvironmentFile=/etc/cloudflared/cloudflared.env
+      ExecStart=/usr/bin/cloudflared tunnel --no-autoupdate run --token ${TUNNEL_TOKEN} --url http://localhost:8080
+      Restart=on-failure
+      RestartSec=5
+
+      [Install]
+      WantedBy=multi-user.target
+  notify:
+    - Reload systemd
+    - Restart cloudflared
+
+- name: Enable and start cloudflared service
+  ansible.builtin.systemd:
+    name: cloudflared-matrix.service
+    state: started
+    enabled: true

@@ -1,16 +1,75 @@
-# simple-matrix
+# Hospital Internal Matrix Deployment (Ansible)
 
-Ansible automation for a simple matrix setup.
+This project deploys a single-node, non-federated Matrix stack for internal hospital use on Ubuntu 24.04. It uses rootless Docker, Cloudflare Tunnel, and local-only nginx exposure on `127.0.0.1:8080`.
 
-## Usage
+## Prerequisites
 
-1. Review variables in `group_vars/all.yml`.
-2. Run the playbook:
+1. Ansible installed on your control machine.
+2. Target host is Ubuntu 24.04 LTS with SSH access.
+3. Cloudflare Tunnel already created in the Cloudflare dashboard.
+4. Install required Ansible collection:
+
+```bash
+ansible-galaxy collection install community.general
+```
+
+## Configure Inventory Variables
+
+Edit `group_vars/all.yml` and set required values:
+
+- `matrix_fqdn`
+- `matrix_instance_name`
+- `matrix_admin_user`
+- `matrix_admin_password`
+- `postgres_password`
+- `cloudflare_tunnel_token`
+- `matrix_retention_days`
+- `backup_retention_days`
+  Optional Cinny branding:
+  - `cinny_custom_logo_path`
+  - `cinny_custom_background_path`
+  - `cinny_landing_text`
+
+Security best practice: store secrets in Ansible Vault rather than plaintext.
+
+## Deploy
 
 ```bash
 ansible-playbook -i inventory.yml playbook.yml
 ```
 
-## Requirements
+## What Gets Deployed
 
-- Ansible 2.14+
+- Dedicated `matrix` system user
+- Rootless Docker + Docker Compose
+- Synapse + PostgreSQL
+- Synapse Admin UI under `/admin`
+- Cinny web client under `/`
+- nginx reverse proxy bound to `127.0.0.1:8080`
+- Cloudflare Tunnel systemd service
+- Host firewall via `ufw`
+- Backup cron container (DB + media)
+ - Automatic initial admin user creation (idempotent)
+
+## Operational Notes
+
+- All services run under `/opt/matrix` and are owned by the `matrix` user.
+- Only nginx binds to localhost; no public ports are opened.
+- Cloudflare handles TLS; nginx runs without SSL locally.
+- Cloudflared runs as a systemd service and forwards `https://chat.hospital.example` to `http://localhost:8080`.
+- Backups are stored under `/opt/matrix/backups`.
+- Cinny branding files (logo/background) are mounted from `/opt/matrix/cinny/custom` and referenced in `config.json`.
+ - Rootless Docker runs as a systemd user service for `matrix`.
+
+## Security Best Practices
+
+- Keep `matrix_admin_password` and `postgres_password` in Vault.
+- Do not expose ports other than localhost `8080`.
+- Restrict SSH access and verify firewall rules before enabling ufw.
+- Rotate Cloudflare tunnel tokens if leaked.
+
+## Troubleshooting
+
+- Check systemd status: `systemctl status cloudflared-matrix`
+- Check rootless Docker: `sudo -u matrix systemctl --user status docker`
+- Check containers: `sudo -u matrix docker compose -f /opt/matrix/docker-compose.yml ps`

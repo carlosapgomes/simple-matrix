@@ -1,0 +1,37 @@
+---
+- name: Ensure matrix group exists
+  ansible.builtin.group:
+    name: "{{ matrix_user }}"
+    gid: "{{ matrix_gid }}"
+    state: present
+
+- name: Ensure matrix user exists
+  ansible.builtin.user:
+    name: "{{ matrix_user }}"
+    uid: "{{ matrix_uid }}"
+    group: "{{ matrix_user }}"
+    home: "{{ matrix_home }}"
+    shell: "{{ matrix_shell }}"
+    create_home: true
+    state: present
+
+- name: Ensure matrix directory structure exists
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ matrix_user }}"
+    group: "{{ matrix_user }}"
+    mode: "0750"
+  loop:
+    - "{{ matrix_home }}"
+    - "{{ matrix_home }}/nginx"
+    - "{{ matrix_home }}/cinny"
+    - "{{ matrix_home }}/cinny/custom"
+    - "{{ matrix_home }}/backup"
+    - "{{ matrix_data_dir }}"
+    - "{{ matrix_data_dir }}/postgres"
+    - "{{ matrix_data_dir }}/synapse"
+    - "{{ matrix_data_dir }}/media_store"
+    - "{{ matrix_backup_dir }}"
+    - "{{ matrix_backup_dir }}/db"
+    - "{{ matrix_backup_dir }}/media"

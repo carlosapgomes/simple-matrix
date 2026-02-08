@@ -1,0 +1,130 @@
+---
+- name: Clone Cinny source
+  ansible.builtin.git:
+    repo: "{{ cinny_repo }}"
+    dest: "{{ cinny_build_dir }}"
+    version: "{{ cinny_version }}"
+    force: false
+  become: true
+  become_user: "{{ matrix_user }}"
+
+- name: Ensure Synapse signing key exists
+  ansible.builtin.command: >-
+    docker run --rm
+    -v {{ matrix_data_dir }}/synapse:/data
+    -e SYNAPSE_SERVER_NAME={{ matrix_fqdn }}
+    -e SYNAPSE_REPORT_STATS=no
+    {{ synapse_image }} generate
+  args:
+    creates: "{{ matrix_data_dir }}/synapse/{{ matrix_fqdn }}.signing.key"
+  become: true
+  become_user: "{{ matrix_user }}"
+  environment:
+    DOCKER_HOST: "unix:///run/user/{{ matrix_uid }}/docker.sock"
+    XDG_RUNTIME_DIR: "/run/user/{{ matrix_uid }}"
+    HOME: "{{ matrix_home }}"
+
+- name: Build Cinny image
+  ansible.builtin.command: docker image inspect {{ cinny_image }}
+  register: cinny_image_check
+  failed_when: false
+  changed_when: false
+  args:
+    chdir: "{{ matrix_home }}"
+  become: true
+  become_user: "{{ matrix_user }}"
+  environment:
+    DOCKER_HOST: "unix:///run/user/{{ matrix_uid }}/docker.sock"
+    XDG_RUNTIME_DIR: "/run/user/{{ matrix_uid }}"
+    HOME: "{{ matrix_home }}"
+
+- name: Build Cinny image if missing
+  ansible.builtin.command: docker compose build cinny
+  when: cinny_image_check.rc != 0
+  args:
+    chdir: "{{ matrix_home }}"
+  become: true
+  become_user: "{{ matrix_user }}"
+  environment:
+    DOCKER_HOST: "unix:///run/user/{{ matrix_uid }}/docker.sock"
+    XDG_RUNTIME_DIR: "/run/user/{{ matrix_uid }}"
+    HOME: "{{ matrix_home }}"
+
+- name: Check backup image
+  ansible.builtin.command: docker image inspect {{ backup_image_local }}
+  register: backup_image_check
+  failed_when: false
+  changed_when: false
+  args:
+    chdir: "{{ matrix_home }}"
+  become: true
+  become_user: "{{ matrix_user }}"
+  environment:
+    DOCKER_HOST: "unix:///run/user/{{ matrix_uid }}/docker.sock"
+    XDG_RUNTIME_DIR: "/run/user/{{ matrix_uid }}"
+    HOME: "{{ matrix_home }}"
+
+- name: Build backup image if missing
+  ansible.builtin.command: docker compose build backup
+  when: backup_image_check.rc != 0
+  args:
+    chdir: "{{ matrix_home }}"
+  become: true
+  become_user: "{{ matrix_user }}"
+  environment:
+    DOCKER_HOST: "unix:///run/user/{{ matrix_uid }}/docker.sock"
+    XDG_RUNTIME_DIR: "/run/user/{{ matrix_uid }}"
+    HOME: "{{ matrix_home }}"
+
+- name: Start matrix stack
+  ansible.builtin.command: docker compose up -d
+  changed_when: false
+  args:
+    chdir: "{{ matrix_home }}"
+  become: true
+  become_user: "{{ matrix_user }}"
+  environment:
+    DOCKER_HOST: "unix:///run/user/{{ matrix_uid }}/docker.sock"
+    XDG_RUNTIME_DIR: "/run/user/{{ matrix_uid }}"
+    HOME: "{{ matrix_home }}"
+
+- name: Wait for Synapse to respond
+  ansible.builtin.uri:
+    url: http://127.0.0.1:8080/_matrix/client/versions
+    method: GET
+    status_code: 200
+  register: synapse_health
+  retries: 20
+  delay: 6
+  until: synapse_health.status == 200
+
+- name: Check if admin user exists
+  ansible.builtin.command: >-
+    docker compose exec -T postgres
+    psql -U {{ postgres_user }} -d {{ postgres_db }} -tAc
+    "SELECT 1 FROM users WHERE name='@{{ matrix_admin_user }}:{{ matrix_fqdn }}';"
+  register: admin_exists
+  changed_when: false
+  become: true
+  become_user: "{{ matrix_user }}"
+  environment:
+    DOCKER_HOST: "unix:///run/user/{{ matrix_uid }}/docker.sock"
+    XDG_RUNTIME_DIR: "/run/user/{{ matrix_uid }}"
+    HOME: "{{ matrix_home }}"
+
+- name: Create admin user if missing
+  ansible.builtin.command: >-
+    docker compose exec -T synapse
+    register_new_matrix_user
+    -c /data/homeserver.yaml
+    -u "{{ matrix_admin_user }}"
+    -p "{{ matrix_admin_password }}"
+    -a
+  when: admin_exists.stdout | trim == ""
+  no_log: true
+  become: true
+  become_user: "{{ matrix_user }}"
+  environment:
+    DOCKER_HOST: "unix:///run/user/{{ matrix_uid }}/docker.sock"
+    XDG_RUNTIME_DIR: "/run/user/{{ matrix_uid }}"
+    HOME: "{{ matrix_home }}"

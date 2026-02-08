@@ -1,0 +1,58 @@
+---
+- name: Ensure ufw is enabled with default deny
+  community.general.ufw:
+    state: enabled
+    policy: deny
+    direction: incoming
+
+- name: Allow outbound traffic by default
+  community.general.ufw:
+    state: enabled
+    policy: allow
+    direction: outgoing
+
+- name: Allow loopback traffic
+  community.general.ufw:
+    rule: allow
+    direction: in
+    interface: lo
+
+- name: Allow outbound DNS (UDP)
+  community.general.ufw:
+    rule: allow
+    direction: out
+    to_port: "53"
+    proto: udp
+
+- name: Allow outbound DNS (TCP)
+  community.general.ufw:
+    rule: allow
+    direction: out
+    to_port: "53"
+    proto: tcp
+
+- name: Allow outbound HTTPS
+  community.general.ufw:
+    rule: allow
+    direction: out
+    to_port: "443"
+    proto: tcp
+
+- name: Allow SSH
+  community.general.ufw:
+    rule: allow
+    direction: in
+    to_port: "{{ firewall_ssh_port }}"
+    proto: tcp
+  when: firewall_allow_ssh
+
+- name: Deny inbound Matrix ports explicitly
+  community.general.ufw:
+    rule: deny
+    direction: in
+    to_port: "{{ item }}"
+    proto: tcp
+  loop:
+    - 8008
+    - 8448
+

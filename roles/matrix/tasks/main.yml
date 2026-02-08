@@ -1,0 +1,32 @@
+---
+- name: Validate inputs
+  ansible.builtin.import_tasks: validate.yml
+
+- name: Install prerequisites
+  ansible.builtin.import_tasks: prereqs.yml
+
+- name: Configure system user and directories
+  ansible.builtin.import_tasks: user.yml
+
+- name: Configure rootless Docker
+  ansible.builtin.import_tasks: docker_rootless.yml
+  when: docker_rootless
+
+- name: Render configuration files
+  ansible.builtin.import_tasks: files.yml
+
+- name: Deploy Docker Compose stack
+  ansible.builtin.import_tasks: compose.yml
+
+- name: Configure Cloudflare Tunnel
+  ansible.builtin.import_tasks: cloudflared.yml
+
+- name: Configure firewall (ufw)
+  ansible.builtin.import_tasks: firewall.yml
+  when: firewall_backend == 'ufw'
+
+- name: Fail if nftables selected but not implemented
+  ansible.builtin.fail:
+    msg: "firewall_backend=nftables is not implemented in this role. Use ufw."
+  when: firewall_backend == 'nftables'
+

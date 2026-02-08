@@ -1,2 +1,25 @@
 ---
-# Add your variables here.
+# Required variables
+matrix_fqdn: chat.hospital.example
+matrix_instance_name: "Hospital Internal Messaging"
+
+matrix_admin_user: admin
+matrix_admin_password: "change-me"
+
+postgres_password: "change-me"
+
+cloudflare_tunnel_token: "change-me"
+
+matrix_retention_days: 7
+backup_retention_days: 14
+
+# Optional overrides
+# firewall_backend: ufw
+# firewall_allow_ssh: true
+# firewall_ssh_port: 22
+
+# cinny_version: "v4.2.0"
+# cinny_custom_logo_path: "files/logo.png"
+# cinny_custom_background_path: "files/background.png"
+# backup_time: "03:00"
+# backup_timezone: "UTC"

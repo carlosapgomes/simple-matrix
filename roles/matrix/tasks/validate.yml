@@ -1,0 +1,22 @@
+---
+- name: Validate required variables are set
+  ansible.builtin.assert:
+    that:
+      - vars[item] is defined
+      - vars[item] | string | length > 0
+    fail_msg: "Required variable '{{ item }}' is missing or empty."
+  loop: "{{ matrix_required_vars }}"
+
+- name: Validate retention values
+  ansible.builtin.assert:
+    that:
+      - matrix_retention_days | int > 0
+      - backup_retention_days | int > 0
+    fail_msg: "Retention values must be positive integers."
+
+- name: Validate firewall backend
+  ansible.builtin.assert:
+    that:
+      - firewall_backend in ['ufw', 'nftables']
+    fail_msg: "firewall_backend must be 'ufw' or 'nftables'."
+

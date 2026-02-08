@@ -1,0 +1,43 @@
+## 🔥 Implementation Prompt
+
+You are an infrastructure automation engineer.
+
+Implement an Ansible project according to the following specification:
+
+
+
+Your task:
+
+1. Design the full Ansible directory structure.
+2. Create:
+
+   * roles/
+   * templates/
+   * handlers/
+   * tasks/
+3. Implement:
+
+   * Dedicated `matrix` system user
+   * Rootless Docker setup
+   * Docker Compose deployment
+   * Synapse configuration templating
+   * nginx reverse proxy config
+   * Cinny static container
+   * PostgreSQL container
+   * Synapse Admin container
+   * cloudflared installation and service
+   * Host firewall configuration
+   * Backup cron container
+4. Ensure idempotency.
+5. Ensure variables are configurable via inventory.
+6. Include a README explaining deployment steps.
+7. Ask clarifying questions if needed before generating full code.
+8. Generate the project in structured steps (do not dump everything at once).
+9. Provide security best practices commentary where relevant.
+
+Do not simplify the architecture.
+Follow the specification strictly.
+
+Start by proposing the project directory structure and variable schema.
+
+---

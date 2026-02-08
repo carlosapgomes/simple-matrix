@@ -1,8 +1,9 @@
 ---
-- name: simple-matrix
+- name: Hospital Internal Matrix Deployment
   hosts: all
-  gather_facts: false
-  tasks:
-    - name: Placeholder task
-      ansible.builtin.debug:
-        msg: "simple-matrix is ready"
+  become: true
+  gather_facts: true
+  collections:
+    - community.general
+  roles:
+    - matrix

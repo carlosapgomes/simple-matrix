@@ -1,0 +1,82 @@
+version: "3.9"
+
+services:
+  postgres:
+    image: {{ postgres_image }}
+    environment:
+      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}"
+      POSTGRES_USER: "${POSTGRES_USER}"
+      POSTGRES_DB: "${POSTGRES_DB}"
+    volumes:
+      - "{{ matrix_data_dir }}/postgres:/var/lib/postgresql/data"
+    restart: unless-stopped
+    networks:
+      - matrix_net
+
+  synapse:
+    image: {{ synapse_image }}
+    depends_on:
+      - postgres
+    environment:
+      SYNAPSE_CONFIG_PATH: /data/homeserver.yaml
+    volumes:
+      - "{{ matrix_data_dir }}/synapse:/data"
+      - "{{ matrix_home }}/homeserver.yaml:/data/homeserver.yaml:ro"
+      - "{{ matrix_data_dir }}/media_store:/data/media_store"
+    restart: unless-stopped
+    networks:
+      - matrix_net
+
+  synapse-admin:
+    image: {{ synapse_admin_image }}
+    environment:
+      REACT_APP_SERVER: "https://{{ matrix_fqdn }}"
+      REACT_APP_SERVER_NAME: "{{ matrix_instance_name }}"
+    restart: unless-stopped
+    networks:
+      - matrix_net
+
+  cinny:
+    image: {{ cinny_image }}
+    build:
+      context: ./cinny/src
+    volumes:
+      - "{{ matrix_home }}/cinny/config.json:/usr/share/nginx/html/config.json:ro"
+      - "{{ matrix_home }}/cinny/custom:/usr/share/nginx/html/custom:ro"
+    restart: unless-stopped
+    networks:
+      - matrix_net
+
+  nginx:
+    image: {{ nginx_image }}
+    depends_on:
+      - synapse
+      - synapse-admin
+      - cinny
+    ports:
+      - "127.0.0.1:8080:80"
+    volumes:
+      - "{{ matrix_home }}/nginx/nginx.conf:/etc/nginx/nginx.conf:ro"
+    restart: unless-stopped
+    networks:
+      - matrix_net
+
+  backup:
+    image: {{ backup_image_local }}
+    build:
+      context: ./backup
+    environment:
+      BACKUP_RETENTION_DAYS: "{{ backup_retention_days }}"
+      PGPASSWORD: "${POSTGRES_PASSWORD}"
+    volumes:
+      - "{{ matrix_backup_dir }}:/backups"
+      - "{{ matrix_data_dir }}:/data:ro"
+    depends_on:
+      - postgres
+    restart: unless-stopped
+    networks:
+      - matrix_net
+
+networks:
+  matrix_net:
+    internal: true

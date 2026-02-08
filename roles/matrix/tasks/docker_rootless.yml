@@ -1,0 +1,28 @@
+---
+- name: Enable linger for matrix user
+  ansible.builtin.command: "loginctl enable-linger {{ matrix_user }}"
+  args:
+    creates: "/var/lib/systemd/linger/{{ matrix_user }}"
+
+- name: Ensure rootless Docker is installed for matrix user
+  ansible.builtin.command: dockerd-rootless-setuptool.sh install
+  become: true
+  become_user: "{{ matrix_user }}"
+  environment:
+    XDG_RUNTIME_DIR: "/run/user/{{ matrix_uid }}"
+    HOME: "{{ matrix_home }}"
+  args:
+    creates: "{{ matrix_home }}/.config/systemd/user/docker.service"
+
+- name: Enable and start rootless Docker service
+  ansible.builtin.systemd:
+    name: docker.service
+    state: started
+    enabled: true
+    scope: user
+  become: true
+  become_user: "{{ matrix_user }}"
+  environment:
+    XDG_RUNTIME_DIR: "/run/user/{{ matrix_uid }}"
+    HOME: "{{ matrix_home }}"
+

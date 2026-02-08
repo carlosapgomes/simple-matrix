@@ -1,0 +1,50 @@
+# Managed by Ansible
+server_name: "{{ matrix_fqdn }}"
+public_baseurl: "{{ matrix_public_baseurl }}"
+
+federation_enabled: false
+allow_public_rooms_over_federation: false
+
+pid_file: /data/homeserver.pid
+signing_key_path: /data/{{ matrix_fqdn }}.signing.key
+log_config: /data/log.config
+
+report_stats: false
+
+enable_registration: false
+enable_registration_without_verification: false
+
+media_store_path: /data/media_store
+
+registration_shared_secret: "{{ synapse_registration_shared_secret }}"
+macaroon_secret_key: "{{ synapse_macaroon_secret_key }}"
+
+# Disable auto-encryption defaults for rooms
+encryption_enabled_by_default_for_room_type: "off"
+
+retention:
+  enabled: true
+  default_policy:
+    min_lifetime: 1d
+    max_lifetime: "{{ matrix_retention_days }}d"
+
+listeners:
+  - port: 8008
+    type: http
+    tls: false
+    bind_addresses: ["0.0.0.0"]
+    x_forwarded: true
+    resources:
+      - names: [client]
+        compress: false
+
+# Database configuration
+
+database:
+  name: psycopg2
+  args:
+    user: "{{ postgres_user }}"
+    password: "{{ postgres_password }}"
+    database: "{{ postgres_db }}"
+    host: postgres
+    port: 5432
