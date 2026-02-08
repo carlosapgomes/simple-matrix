@@ -130,7 +130,10 @@
     -f {{ matrix_home }}/docker-compose.yml
     -p {{ docker_compose_project }}
     up -d --force-recreate nginx
-  when: nginx_port.rc != 0 or (nginx_port.stdout | trim | regex_search('8080$')) is none
+  when: >-
+    nginx_config_render is changed
+    or nginx_port.rc != 0
+    or (nginx_port.stdout | trim | regex_search('8080$')) is none
   changed_when: false
   args:
     chdir: "{{ matrix_home }}"

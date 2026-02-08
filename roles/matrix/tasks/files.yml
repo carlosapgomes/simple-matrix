@@ -130,6 +130,7 @@
     owner: "{{ matrix_user }}"
     group: "{{ matrix_user }}"
     mode: "0644"
+  register: nginx_config_render
 
 - name: Render Cinny config
   ansible.builtin.template:
