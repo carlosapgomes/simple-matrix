@@ -1,0 +1,8 @@
+---
+- name: simple-matrix
+  hosts: all
+  gather_facts: false
+  tasks:
+    - name: Placeholder task
+      ansible.builtin.debug:
+        msg: "simple-matrix is ready"
