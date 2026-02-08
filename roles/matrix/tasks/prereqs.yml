@@ -70,7 +70,7 @@
 
 - name: Add Cloudflare apt repository
   ansible.builtin.apt_repository:
-    repo: "deb [signed-by=/etc/apt/keyrings/cloudflare.gpg] https://pkg.cloudflare.com/cloudflared {{ ansible_distribution_release }} main"
+    repo: "deb [signed-by=/etc/apt/keyrings/cloudflare.gpg] https://pkg.cloudflare.com/cloudflared {{ ansible_facts['distribution_release'] }} main"
     state: present
     filename: cloudflared
 

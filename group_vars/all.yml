@@ -1,4 +1,7 @@
 ---
+# Pin interpreter to avoid discovery warnings across Ansible versions
+ansible_python_interpreter: /usr/bin/python3
+
 # Required variables
 matrix_fqdn: chat.hospital.example
 matrix_instance_name: "Hospital Internal Messaging"

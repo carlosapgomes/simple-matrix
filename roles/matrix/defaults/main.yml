@@ -24,7 +24,7 @@ backup_image_local: matrix-backup:latest
 cinny_image: cinny:local
 
 cinny_repo: https://github.com/cinnyapp/cinny.git
-cinny_version: main
+cinny_version: v4.10.2
 cinny_build_dir: "{{ matrix_home }}/cinny/src"
 cinny_landing_text: "Hospital Internal Messaging"
 cinny_custom_logo_path: ""

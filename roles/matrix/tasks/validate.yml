@@ -2,8 +2,7 @@
 - name: Validate required variables are set
   ansible.builtin.assert:
     that:
-      - vars[item] is defined
-      - vars[item] | string | length > 0
+      - lookup('ansible.builtin.vars', item, default='') | string | length > 0
     fail_msg: "Required variable '{{ item }}' is missing or empty."
   loop: "{{ matrix_required_vars }}"
 
@@ -19,4 +18,3 @@
     that:
       - firewall_backend in ['ufw', 'nftables']
     fail_msg: "firewall_backend must be 'ufw' or 'nftables'."
-
