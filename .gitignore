@@ -1,0 +1,9 @@
+# Ansible
+*.retry
+
+# OS
+.DS_Store
+
+# Editor
+.vscode/
+.idea/
