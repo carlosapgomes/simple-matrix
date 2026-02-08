@@ -9,6 +9,14 @@ matrix_shell: /usr/sbin/nologin
 
 matrix_data_dir: "{{ matrix_home }}/data"
 matrix_backup_dir: "{{ matrix_home }}/backups"
+matrix_subuid_start: 100000
+matrix_subuid_range: 65536
+
+# Rootless user namespace mapping for postgres user (uid/gid 999 in container)
+postgres_container_uid: 999
+postgres_container_gid: 999
+postgres_host_uid: "{{ (matrix_subuid_start | int) + (postgres_container_uid | int) }}"
+postgres_host_gid: "{{ (matrix_subuid_start | int) + (postgres_container_gid | int) }}"
 
 # Docker / Compose
 docker_rootless: true

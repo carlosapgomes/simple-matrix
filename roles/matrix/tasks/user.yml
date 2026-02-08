@@ -40,6 +40,14 @@
   ansible.builtin.file:
     path: "{{ matrix_data_dir }}/postgres"
     state: directory
-    owner: "{{ matrix_user }}"
-    group: "{{ matrix_user }}"
+    owner: "{{ postgres_host_uid }}"
+    group: "{{ postgres_host_gid }}"
     mode: "0755"
+
+- name: Ensure PostgreSQL data tree ownership for rootless mapped UID
+  ansible.builtin.file:
+    path: "{{ matrix_data_dir }}/postgres"
+    state: directory
+    owner: "{{ postgres_host_uid }}"
+    group: "{{ postgres_host_gid }}"
+    recurse: true

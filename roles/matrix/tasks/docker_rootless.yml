@@ -7,14 +7,14 @@
 - name: Ensure subuid entry for matrix user
   ansible.builtin.lineinfile:
     path: /etc/subuid
-    line: "{{ matrix_user }}:100000:65536"
+    line: "{{ matrix_user }}:{{ matrix_subuid_start }}:{{ matrix_subuid_range }}"
     create: true
     mode: "0644"
 
 - name: Ensure subgid entry for matrix user
   ansible.builtin.lineinfile:
     path: /etc/subgid
-    line: "{{ matrix_user }}:100000:65536"
+    line: "{{ matrix_user }}:{{ matrix_subuid_start }}:{{ matrix_subuid_range }}"
     create: true
     mode: "0644"
 

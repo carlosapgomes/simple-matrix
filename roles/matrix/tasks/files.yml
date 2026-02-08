@@ -106,11 +106,10 @@
     mode: "0640"
   no_log: true
 
-- name: Copy Synapse config into data directory
-  ansible.builtin.copy:
-    src: "{{ matrix_home }}/homeserver.yaml"
+- name: Render Synapse runtime config in data directory
+  ansible.builtin.template:
+    src: homeserver.yaml.j2
     dest: "{{ matrix_data_dir }}/synapse/homeserver.yaml"
-    remote_src: true
     owner: "{{ matrix_user }}"
     group: "{{ matrix_user }}"
     mode: "0640"
