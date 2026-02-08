@@ -53,6 +53,14 @@ ansible-playbook -i inventory.yml playbook.yml -u ubuntu -K
 
 The `-K` flag prompts for the sudo password on the managed node.
 
+If you authenticate with SSH password (no SSH keys), use:
+
+```bash
+ansible-playbook -i inventory.yml playbook.yml -u ubuntu -k -K
+```
+
+The `-k` flag prompts for the SSH login password.
+
 Root account:
 
 ```bash
