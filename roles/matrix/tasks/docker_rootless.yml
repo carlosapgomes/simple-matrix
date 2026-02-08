@@ -4,6 +4,20 @@
   args:
     creates: "/var/lib/systemd/linger/{{ matrix_user }}"
 
+- name: Ensure subuid entry for matrix user
+  ansible.builtin.lineinfile:
+    path: /etc/subuid
+    line: "{{ matrix_user }}:100000:65536"
+    create: true
+    mode: "0644"
+
+- name: Ensure subgid entry for matrix user
+  ansible.builtin.lineinfile:
+    path: /etc/subgid
+    line: "{{ matrix_user }}:100000:65536"
+    create: true
+    mode: "0644"
+
 - name: Ensure rootless Docker is installed for matrix user
   ansible.builtin.command: dockerd-rootless-setuptool.sh install
   become: true
@@ -25,4 +39,3 @@
   environment:
     XDG_RUNTIME_DIR: "/run/user/{{ matrix_uid }}"
     HOME: "{{ matrix_home }}"
-
