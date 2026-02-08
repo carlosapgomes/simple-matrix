@@ -73,14 +73,42 @@ Security best practice:
 
 ## Deploy
 
+Terminology:
+
+- Control node: the machine where you run Ansible.
+- Managed node: the target server where Matrix will be installed.
+
+Steps (common workflow):
+
+1. On the control node, clone this repository:
+
 ```bash
-ansible-playbook -i inventory.yml playbook.yml
+git clone https://github.com/carlosapgomes/simple-matrix.git
+cd simple-matrix
 ```
 
-If you encrypted `group_vars/all.yml`, use:
+2. Update `inventory.yml` to point to your managed node (or add its hostname/IP).
+
+3. Fill out `group_vars/all.yml` with real values (use Vault if desired).
+
+4. Run the playbook from the control node.
+
+Sudo user (recommended):
 
 ```bash
-ansible-playbook -i inventory.yml playbook.yml --ask-vault-pass
+ansible-playbook -i inventory.yml playbook.yml -u ubuntu -K
+```
+
+Root account:
+
+```bash
+ansible-playbook -i inventory.yml playbook.yml -u root
+```
+
+If you encrypted `group_vars/all.yml`, add `--ask-vault-pass`:
+
+```bash
+ansible-playbook -i inventory.yml playbook.yml -u ubuntu -K --ask-vault-pass
 ```
 
 ## Running With Sudo User vs Root
