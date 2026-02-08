@@ -1,5 +1,3 @@
-version: "3.9"
-
 services:
   postgres:
     image: {{ postgres_image }}
@@ -22,7 +20,6 @@ services:
       SYNAPSE_CONFIG_PATH: /data/homeserver.yaml
     volumes:
       - "{{ matrix_data_dir }}/synapse:/data"
-      - "{{ matrix_home }}/homeserver.yaml:/data/homeserver.yaml:ro"
       - "{{ matrix_data_dir }}/media_store:/data/media_store"
     restart: unless-stopped
     networks:

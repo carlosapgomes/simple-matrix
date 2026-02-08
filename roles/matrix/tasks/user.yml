@@ -35,3 +35,11 @@
     - "{{ matrix_backup_dir }}"
     - "{{ matrix_backup_dir }}/db"
     - "{{ matrix_backup_dir }}/media"
+
+- name: Ensure PostgreSQL bind directory is traversable by mapped container UID
+  ansible.builtin.file:
+    path: "{{ matrix_data_dir }}/postgres"
+    state: directory
+    owner: "{{ matrix_user }}"
+    group: "{{ matrix_user }}"
+    mode: "0755"
