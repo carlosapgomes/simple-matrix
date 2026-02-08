@@ -1,6 +1,6 @@
 # Hospital Internal Matrix Deployment (Ansible)
 
-This project deploys a single-node, non-federated Matrix stack for internal hospital use on Ubuntu 24.04. It uses rootless Docker, Cloudflare Tunnel, and local-only nginx exposure on `127.0.0.1:8080`.
+This project deploys a single-node, non-federated Matrix stack for internal hospital use on Ubuntu 24.04. It uses rootless Docker, Cloudflare Tunnel, and nginx exposure on host port `8080` protected by host firewall policy.
 
 ## Prerequisites
 
@@ -144,7 +144,7 @@ Security best practice:
 - Synapse + PostgreSQL
 - Synapse Admin UI under `/admin`
 - Cinny web client under `/`
-- nginx reverse proxy bound to `127.0.0.1:8080`
+- nginx reverse proxy published on host port `8080`
 - Cloudflare Tunnel systemd service
 - Host firewall via `ufw`
 - Backup cron container (DB + media)
@@ -153,7 +153,7 @@ Security best practice:
 ## Operational Notes
 
 - All services run under `/opt/matrix` and are owned by the `matrix` user.
-- Only nginx binds to localhost; no public ports are opened.
+- Only nginx is published on host port `8080`; host firewall policy keeps external access blocked.
 - Cloudflare handles TLS; nginx runs without SSL locally.
 - Cloudflared runs as a systemd service and forwards `https://chat.hospital.example` to `http://localhost:8080`.
 - Backups are stored under `/opt/matrix/backups`.

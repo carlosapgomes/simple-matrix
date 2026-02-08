@@ -64,7 +64,7 @@ services:
       - synapse-admin
       - cinny
     ports:
-      - "127.0.0.1:8080:80"
+      - "8080:80"
     volumes:
       - "{{ matrix_home }}/nginx/nginx.conf:/etc/nginx/nginx.conf:ro"
     restart: unless-stopped
