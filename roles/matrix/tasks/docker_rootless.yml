@@ -22,6 +22,7 @@
 
 - name: Ensure rootless Docker is installed for matrix user
   ansible.builtin.command: dockerd-rootless-setuptool.sh install
+  register: rootless_setup
   become: true
   become_user: "{{ matrix_user }}"
   environment:
@@ -41,3 +42,16 @@
   environment:
     XDG_RUNTIME_DIR: "/run/user/{{ matrix_uid }}"
     HOME: "{{ matrix_home }}"
+
+- name: Restart rootless Docker service after reinstall
+  ansible.builtin.systemd:
+    name: docker.service
+    state: restarted
+    enabled: true
+    scope: user
+  become: true
+  become_user: "{{ matrix_user }}"
+  environment:
+    XDG_RUNTIME_DIR: "/run/user/{{ matrix_uid }}"
+    HOME: "{{ matrix_home }}"
+  when: rootless_setup is changed
