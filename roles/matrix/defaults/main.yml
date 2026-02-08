@@ -71,3 +71,10 @@ firewall_ssh_port: 22
 # Derived
 matrix_synapse_server_name: "{{ matrix_fqdn }}"
 matrix_public_baseurl: "https://{{ matrix_fqdn }}/"
+
+# Registration policy
+synapse_enable_registration: false
+synapse_enable_registration_without_verification: false
+
+# Cinny login UX
+cinny_hide_register_prompt: "{{ not (synapse_enable_registration | bool) }}"

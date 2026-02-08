@@ -13,6 +13,14 @@
       - backup_retention_days | int > 0
     fail_msg: "Retention values must be positive integers."
 
+- name: Validate registration policy
+  ansible.builtin.assert:
+    that:
+      - not (synapse_enable_registration_without_verification | bool) or (synapse_enable_registration | bool)
+    fail_msg: >-
+      synapse_enable_registration_without_verification=true requires
+      synapse_enable_registration=true.
+
 - name: Validate firewall backend
   ansible.builtin.assert:
     that:

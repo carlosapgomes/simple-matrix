@@ -14,8 +14,8 @@ log_config: /data/log.config
 
 report_stats: false
 
-enable_registration: false
-enable_registration_without_verification: false
+enable_registration: {{ (synapse_enable_registration | bool) | lower }}
+enable_registration_without_verification: {{ (synapse_enable_registration_without_verification | bool) | lower }}
 
 media_store_path: /data/media_store
 

@@ -96,6 +96,7 @@ Optional Cinny branding:
 - `cinny_custom_logo_path`
 - `cinny_custom_background_path`
 - `cinny_landing_text`
+- `cinny_hide_register_prompt` (default: follows `synapse_enable_registration`; hides login-page register CTA when registration is disabled)
 
 Optional Cinny source-build mode:
 
@@ -113,6 +114,11 @@ Optional Docker rootless tuning:
 Optional Synapse Admin tuning:
 
 - `synapse_admin_upstream_port` (default: `8080`, set `80` if using older image variants)
+
+Optional registration policy:
+
+- `synapse_enable_registration` (default: `false`)
+- `synapse_enable_registration_without_verification` (default: `false`)
 
 Security best practice: store secrets in Ansible Vault rather than plaintext.
 
