@@ -15,14 +15,14 @@ matrix_subuid_range: 65536
 # Rootless user namespace mapping for postgres user (uid/gid 999 in container)
 postgres_container_uid: 999
 postgres_container_gid: 999
-postgres_host_uid: "{{ (matrix_subuid_start | int) + (postgres_container_uid | int) }}"
-postgres_host_gid: "{{ (matrix_subuid_start | int) + (postgres_container_gid | int) }}"
+postgres_host_uid: "{{ (matrix_subuid_start | int) + (postgres_container_uid | int) - 1 }}"
+postgres_host_gid: "{{ (matrix_subuid_start | int) + (postgres_container_gid | int) - 1 }}"
 
 # Rootless user namespace mapping for synapse user (uid/gid 991 in container)
 synapse_container_uid: 991
 synapse_container_gid: 991
-synapse_host_uid: "{{ (matrix_subuid_start | int) + (synapse_container_uid | int) }}"
-synapse_host_gid: "{{ (matrix_subuid_start | int) + (synapse_container_gid | int) }}"
+synapse_host_uid: "{{ (matrix_subuid_start | int) + (synapse_container_uid | int) - 1 }}"
+synapse_host_gid: "{{ (matrix_subuid_start | int) + (synapse_container_gid | int) - 1 }}"
 
 # Docker / Compose
 docker_rootless: true
