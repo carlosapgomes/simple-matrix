@@ -18,3 +18,9 @@
     that:
       - firewall_backend in ['ufw', 'nftables']
     fail_msg: "firewall_backend must be 'ufw' or 'nftables'."
+
+- name: Validate Docker package state
+  ansible.builtin.assert:
+    that:
+      - docker_packages_state in ['present', 'latest']
+    fail_msg: "docker_packages_state must be 'present' or 'latest'."

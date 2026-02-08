@@ -103,6 +103,12 @@ Optional Cinny source-build mode:
 - `cinny_image_prebuilt` (default: `ghcr.io/cinnyapp/cinny:latest`)
 - `cinny_image_local` (default: `cinny:local`)
 
+Optional Docker rootless tuning:
+
+- `docker_packages_state` (default: `latest`)
+- `docker_min_server_version` (default: `28.0.1`)
+- `docker_rootlesskit_port_driver` (default: `builtin`)
+
 Security best practice: store secrets in Ansible Vault rather than plaintext.
 
 ## Using Ansible Vault (Recommended)

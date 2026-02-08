@@ -82,3 +82,41 @@
     XDG_RUNTIME_DIR: "/run/user/{{ matrix_uid }}"
     HOME: "{{ matrix_home }}"
   when: rootless_setup is changed or rootless_override is changed
+
+- name: Get rootless Docker server version
+  ansible.builtin.command: >-
+    docker version --format '{{ '{{' }}.Server.Version{{ '}}' }}'
+  register: docker_server_version
+  changed_when: false
+  become: true
+  become_user: "{{ matrix_user }}"
+  environment:
+    DOCKER_HOST: "unix:///run/user/{{ matrix_uid }}/docker.sock"
+    XDG_RUNTIME_DIR: "/run/user/{{ matrix_uid }}"
+    HOME: "{{ matrix_home }}"
+
+- name: Assert rootless Docker server version is supported
+  ansible.builtin.assert:
+    that:
+      - docker_server_version.stdout | trim is version(docker_min_server_version, '>=')
+    fail_msg: >-
+      Docker server version {{ docker_server_version.stdout | trim }} is below
+      required minimum {{ docker_min_server_version }} for stable rootless port
+      publishing.
+
+- name: Capture rootlesskit process arguments
+  ansible.builtin.command: pgrep -u {{ matrix_uid }} -af rootlesskit
+  register: rootlesskit_ps
+  failed_when: false
+  changed_when: false
+
+- name: Assert rootlesskit uses configured network and port drivers
+  ansible.builtin.assert:
+    that:
+      - rootlesskit_ps.rc == 0
+      - (rootlesskit_ps.stdout | regex_search('--net=' ~ docker_rootlesskit_net_driver ~ '(\\s|$)')) is not none
+      - (rootlesskit_ps.stdout | regex_search('--port-driver=' ~ docker_rootlesskit_port_driver ~ '(\\s|$)')) is not none
+    fail_msg: >-
+      RootlessKit drivers mismatch. Expected --net={{ docker_rootlesskit_net_driver }}
+      and --port-driver={{ docker_rootlesskit_port_driver }} but got:
+      {{ rootlesskit_ps.stdout | default('not running') }}.
