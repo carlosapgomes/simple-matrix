@@ -34,6 +34,27 @@ Optional Cinny branding:
 
 Security best practice: store secrets in Ansible Vault rather than plaintext.
 
+## Cloudflare Tunnel Setup (Token)
+
+This project expects a pre-created Cloudflare Tunnel and uses the tunnel token only.
+It does not create or manage Cloudflare resources automatically.
+
+Steps to get the token:
+
+1. Log in to the Cloudflare dashboard.
+2. Go to `Zero Trust` → `Access` → `Tunnels`.
+3. Create a new tunnel (type: Cloudflared).
+4. In the tunnel details, copy the token for your tunnel.
+5. Set `cloudflare_tunnel_token` in `group_vars/all.yml` (preferably via Ansible Vault).
+
+Routing requirement:
+
+- Public hostname `https://<matrix_fqdn>` should point to `http://localhost:8080` via the tunnel.
+
+Security best practice:
+
+- Treat the tunnel token as a secret. Rotate it if leaked.
+
 ## Deploy
 
 ```bash
