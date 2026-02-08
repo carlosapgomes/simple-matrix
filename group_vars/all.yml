@@ -22,8 +22,6 @@ backup_retention_days: 14
 # firewall_ssh_port: 22
 
 # cinny_version: "v4.2.0"
-# cinny_custom_logo_path: "files/logo.png"
-# cinny_custom_background_path: "files/background.png"
 # synapse_enable_registration: false
 # synapse_enable_registration_without_verification: false
 # cinny_hide_register_prompt: true

@@ -140,24 +140,6 @@
     group: "{{ matrix_user }}"
     mode: "0644"
 
-- name: Copy Cinny custom logo (optional)
-  ansible.builtin.copy:
-    src: "{{ cinny_custom_logo_path }}"
-    dest: "{{ matrix_home }}/cinny/custom/logo.png"
-    owner: "{{ matrix_user }}"
-    group: "{{ matrix_user }}"
-    mode: "0644"
-  when: cinny_custom_logo_path is defined and cinny_custom_logo_path | string | length > 0
-
-- name: Copy Cinny custom background (optional)
-  ansible.builtin.copy:
-    src: "{{ cinny_custom_background_path }}"
-    dest: "{{ matrix_home }}/cinny/custom/background.png"
-    owner: "{{ matrix_user }}"
-    group: "{{ matrix_user }}"
-    mode: "0644"
-  when: cinny_custom_background_path is defined and cinny_custom_background_path | string | length > 0
-
 - name: Render docker-compose file
   ansible.builtin.template:
     src: docker-compose.yml.j2

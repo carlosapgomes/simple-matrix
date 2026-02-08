@@ -91,11 +91,8 @@ Edit `group_vars/all.yml` and set required values:
 - `matrix_retention_days`
 - `backup_retention_days`
 
-Optional Cinny branding:
+Optional Cinny login UX:
 
-- `cinny_custom_logo_path`
-- `cinny_custom_background_path`
-- `cinny_landing_text`
 - `cinny_hide_register_prompt` (default: follows `synapse_enable_registration`; hides login-page register CTA when registration is disabled)
 
 Optional Cinny source-build mode:
@@ -181,7 +178,6 @@ Security best practice:
 - Cloudflare handles TLS; nginx runs without SSL locally.
 - Cloudflared runs as a systemd service and forwards `https://chat.hospital.example` to `http://localhost:8080`.
 - Backups are stored under `/opt/matrix/backups`.
-- Cinny branding files (logo/background) are mounted from `/opt/matrix/cinny/custom` and referenced in `config.json`.
  - Rootless Docker runs as a systemd user service for `matrix`.
 
 ## Security Best Practices

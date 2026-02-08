@@ -26,7 +26,6 @@
     - "{{ matrix_home }}"
     - "{{ matrix_home }}/nginx"
     - "{{ matrix_home }}/cinny"
-    - "{{ matrix_home }}/cinny/custom"
     - "{{ matrix_home }}/backup"
     - "{{ matrix_data_dir }}"
     - "{{ matrix_data_dir }}/postgres"

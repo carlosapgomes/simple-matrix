@@ -54,7 +54,6 @@ services:
 {% endif %}
     volumes:
       - "{{ matrix_home }}/cinny/config.json:/usr/share/nginx/html/config.json:ro"
-      - "{{ matrix_home }}/cinny/custom:/usr/share/nginx/html/custom:ro"
     restart: unless-stopped
     networks:
       - matrix_net

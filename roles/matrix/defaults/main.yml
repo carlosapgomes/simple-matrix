@@ -53,9 +53,6 @@ cinny_image: "{{ cinny_image_local if (cinny_build_from_source | bool) else cinn
 cinny_repo: https://github.com/cinnyapp/cinny.git
 cinny_version: v4.10.2
 cinny_build_dir: "{{ matrix_home }}/cinny/src"
-cinny_landing_text: "Hospital Internal Messaging"
-cinny_custom_logo_path: ""
-cinny_custom_background_path: ""
 
 postgres_db: synapse
 postgres_user: synapse
