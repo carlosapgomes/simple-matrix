@@ -8,6 +8,16 @@ services:
       POSTGRES_INITDB_ARGS: "{{ postgres_initdb_args }}"
     volumes:
       - "{{ matrix_data_dir }}/postgres:/var/lib/postgresql/data"
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -U \"$${POSTGRES_USER}\" -d \"$${POSTGRES_DB}\" -h 127.0.0.1",
+        ]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+      start_period: 10s
     restart: unless-stopped
     networks:
       - matrix_net
@@ -16,7 +26,8 @@ services:
     image: {{ synapse_image }}
     user: "{{ synapse_container_user }}"
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy
     environment:
       SYNAPSE_CONFIG_PATH: /data/homeserver.yaml
     volumes:
@@ -71,7 +82,8 @@ services:
       - "{{ matrix_backup_dir }}:/backups"
       - "{{ matrix_data_dir }}:/data:ro"
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy
     restart: unless-stopped
     networks:
       - matrix_net
