@@ -53,6 +53,11 @@ If you encrypted `group_vars/all.yml`, add `--ask-vault-pass`:
 ansible-playbook -i inventory.yml playbook.yml -u ubuntu -K --ask-vault-pass
 ```
 
+Notes:
+
+- `-K` prompts for the sudo password. If your sudo user has passwordless sudo, you can omit it.
+- Replace `ubuntu` with your actual SSH user.
+
 ## Configure Inventory Variables
 
 Edit `group_vars/all.yml` and set required values:
@@ -111,16 +116,6 @@ Security best practice:
 
 - Treat the tunnel token as a secret. Rotate it if leaked.
 
-Root account:
-
-```bash
-ansible-playbook -i inventory.yml playbook.yml -u root
-```
-
-Notes:
-
-- `-K` prompts for the sudo password. If your sudo user has passwordless sudo, you can omit it.
-- Replace `ubuntu` with your actual SSH user.
 
 ## What Gets Deployed
 
