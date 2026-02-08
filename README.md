@@ -40,6 +40,25 @@ Security best practice: store secrets in Ansible Vault rather than plaintext.
 ansible-playbook -i inventory.yml playbook.yml
 ```
 
+## Running With Sudo User vs Root
+
+Common sudo user (recommended):
+
+```bash
+ansible-playbook -i inventory.yml playbook.yml -u ubuntu -K
+```
+
+Root account:
+
+```bash
+ansible-playbook -i inventory.yml playbook.yml -u root
+```
+
+Notes:
+
+- `-K` prompts for the sudo password. If your sudo user has passwordless sudo, you can omit it.
+- Replace `ubuntu` with your actual SSH user.
+
 ## What Gets Deployed
 
 - Dedicated `matrix` system user
