@@ -15,6 +15,7 @@ services:
 
   synapse:
     image: {{ synapse_image }}
+    user: "{{ matrix_uid }}:{{ matrix_gid }}"
     depends_on:
       - postgres
     environment:
