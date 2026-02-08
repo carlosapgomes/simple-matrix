@@ -31,6 +31,7 @@ docker_rootlesskit_net_driver: slirp4netns
 docker_rootlesskit_port_driver: builtin
 docker_packages_state: latest
 docker_min_server_version: "28.0.1"
+matrix_network_internal: false
 
 synapse_image: docker.io/matrixdotorg/synapse:latest
 synapse_container_user: "{{ synapse_container_uid }}:{{ synapse_container_gid }}"

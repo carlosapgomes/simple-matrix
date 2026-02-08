@@ -24,3 +24,12 @@
     that:
       - docker_packages_state in ['present', 'latest']
     fail_msg: "docker_packages_state must be 'present' or 'latest'."
+
+- name: Validate network mode compatibility
+  ansible.builtin.assert:
+    that:
+      - not (matrix_network_internal | bool)
+    fail_msg: >-
+      matrix_network_internal=true is incompatible with this role because nginx
+      must publish host port 8080 for local health checks and Cloudflare tunnel
+      forwarding.

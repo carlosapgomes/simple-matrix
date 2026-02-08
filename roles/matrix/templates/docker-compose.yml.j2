@@ -92,4 +92,6 @@ services:
 
 networks:
   matrix_net:
+{% if matrix_network_internal | bool %}
     internal: true
+{% endif %}

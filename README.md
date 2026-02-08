@@ -108,6 +108,7 @@ Optional Docker rootless tuning:
 - `docker_packages_state` (default: `latest`)
 - `docker_min_server_version` (default: `28.0.1`)
 - `docker_rootlesskit_port_driver` (default: `builtin`)
+- `matrix_network_internal` (default: `false`)
 
 Security best practice: store secrets in Ansible Vault rather than plaintext.
 
