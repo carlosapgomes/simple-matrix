@@ -31,6 +31,16 @@ cd simple-matrix
 
 2. Update `inventory.yml` to point to your managed node (or add its hostname/IP).
 
+Example `inventory.yml`:
+
+```yaml
+all:
+  hosts:
+    matrix1:
+      ansible_host: 203.0.113.10
+      ansible_user: ubuntu
+```
+
 3. Fill out `group_vars/all.yml` with real values (use Vault if desired).
 
 4. Run the playbook from the control node.
@@ -40,6 +50,8 @@ Sudo user (recommended):
 ```bash
 ansible-playbook -i inventory.yml playbook.yml -u ubuntu -K
 ```
+
+The `-K` flag prompts for the sudo password on the managed node.
 
 Root account:
 
