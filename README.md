@@ -25,10 +25,12 @@ Edit `group_vars/all.yml` and set required values:
 - `cloudflare_tunnel_token`
 - `matrix_retention_days`
 - `backup_retention_days`
-  Optional Cinny branding:
-  - `cinny_custom_logo_path`
-  - `cinny_custom_background_path`
-  - `cinny_landing_text`
+
+Optional Cinny branding:
+
+- `cinny_custom_logo_path`
+- `cinny_custom_background_path`
+- `cinny_landing_text`
 
 Security best practice: store secrets in Ansible Vault rather than plaintext.
 
