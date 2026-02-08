@@ -5,5 +5,9 @@
   gather_facts: true
   collections:
     - community.general
+  pre_tasks:
+    - name: Ensure Ansible remote tmp directory exists
+      ansible.builtin.raw: "mkdir -p /var/tmp/ansible-tmp && chmod 1777 /var/tmp/ansible-tmp"
+      changed_when: false
   roles:
     - matrix
