@@ -51,3 +51,15 @@
     owner: "{{ postgres_host_uid }}"
     group: "{{ postgres_host_gid }}"
     recurse: true
+
+- name: Ensure Synapse data tree ownership for rootless mapped UID
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ synapse_host_uid }}"
+    group: "{{ synapse_host_gid }}"
+    mode: "0750"
+    recurse: true
+  loop:
+    - "{{ matrix_data_dir }}/synapse"
+    - "{{ matrix_data_dir }}/media_store"

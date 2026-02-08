@@ -18,12 +18,18 @@ postgres_container_gid: 999
 postgres_host_uid: "{{ (matrix_subuid_start | int) + (postgres_container_uid | int) }}"
 postgres_host_gid: "{{ (matrix_subuid_start | int) + (postgres_container_gid | int) }}"
 
+# Rootless user namespace mapping for synapse user (uid/gid 991 in container)
+synapse_container_uid: 991
+synapse_container_gid: 991
+synapse_host_uid: "{{ (matrix_subuid_start | int) + (synapse_container_uid | int) }}"
+synapse_host_gid: "{{ (matrix_subuid_start | int) + (synapse_container_gid | int) }}"
+
 # Docker / Compose
 docker_rootless: true
 docker_compose_project: matrix
 
 synapse_image: docker.io/matrixdotorg/synapse:latest
-synapse_container_user: "0:0"
+synapse_container_user: "{{ synapse_container_uid }}:{{ synapse_container_gid }}"
 postgres_image: docker.io/postgres:16
 nginx_image: docker.io/nginx:stable
 synapse_admin_image: docker.io/etkecc/synapse-admin:latest
