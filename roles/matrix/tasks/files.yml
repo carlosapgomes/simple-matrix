@@ -181,3 +181,12 @@
     owner: "{{ matrix_user }}"
     group: "{{ matrix_user }}"
     mode: "0644"
+
+- name: Deploy reset script
+  ansible.builtin.template:
+    src: reset-matrix.sh.j2
+    dest: "{{ matrix_reset_script_path }}"
+    owner: root
+    group: root
+    mode: "0750"
+  when: matrix_reset_script_enabled | bool

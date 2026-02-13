@@ -1,0 +1,63 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+MATRIX_USER="{{ matrix_user }}"
+MATRIX_UID="{{ matrix_uid }}"
+MATRIX_HOME="{{ matrix_home }}"
+MATRIX_DATA_DIR="{{ matrix_data_dir }}"
+MATRIX_BACKUP_DIR="{{ matrix_backup_dir }}"
+COMPOSE_FILE="{{ matrix_home }}/docker-compose.yml"
+COMPOSE_PROJECT="{{ docker_compose_project }}"
+REMOVE_BACKUPS="{{ (matrix_reset_remove_backups | bool) | ternary('true', 'false') }}"
+
+export XDG_RUNTIME_DIR="/run/user/${MATRIX_UID}"
+export DOCKER_HOST="unix://${XDG_RUNTIME_DIR}/docker.sock"
+
+run_as_matrix() {
+  sudo -u "${MATRIX_USER}" \
+    XDG_RUNTIME_DIR="${XDG_RUNTIME_DIR}" \
+    DOCKER_HOST="${DOCKER_HOST}" \
+    HOME="${MATRIX_HOME}" \
+    "$@"
+}
+
+confirm() {
+  local prompt="$1"
+  read -r -p "${prompt} [y/N]: " answer
+  case "${answer}" in
+    y|Y|yes|YES) return 0 ;;
+    *) return 1 ;;
+  esac
+}
+
+echo "This will permanently remove Matrix state from:"
+echo "  - ${MATRIX_DATA_DIR}/postgres"
+echo "  - ${MATRIX_DATA_DIR}/synapse"
+echo "  - ${MATRIX_DATA_DIR}/media_store"
+echo "  - ${MATRIX_HOME}/.secrets"
+if [[ "${REMOVE_BACKUPS}" == "true" ]]; then
+  echo "  - ${MATRIX_BACKUP_DIR}"
+fi
+echo
+
+if ! confirm "Continue with full reset"; then
+  echo "Cancelled."
+  exit 1
+fi
+
+if [[ -f "${COMPOSE_FILE}" ]]; then
+  run_as_matrix docker compose -f "${COMPOSE_FILE}" -p "${COMPOSE_PROJECT}" down || true
+fi
+
+rm -rf \
+  "${MATRIX_DATA_DIR}/postgres" \
+  "${MATRIX_DATA_DIR}/synapse" \
+  "${MATRIX_DATA_DIR}/media_store" \
+  "${MATRIX_HOME}/.secrets"
+
+if [[ "${REMOVE_BACKUPS}" == "true" ]]; then
+  rm -rf "${MATRIX_BACKUP_DIR}"
+fi
+
+echo "Reset complete."
+echo "Re-run the Ansible playbook from the control node to provision a fresh instance."
