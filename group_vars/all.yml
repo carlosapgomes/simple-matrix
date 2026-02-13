@@ -41,8 +41,14 @@ backup_retention_days: 14
 #       base_url: "https://{{ matrix_fqdn }}"
 #       server_name: "{{ matrix_fqdn }}"
 #   disable_custom_urls: true
-# element_classic_branding_logo_file: logo.svg
+# element_classic_branding_logo_file: logo.png
 # element_classic_branding_background_file: background.jpg
+# element_classic_custom_welcome_enabled: true
+# element_classic_custom_welcome_file: element-welcome.html
+# element_classic_custom_welcome_locale: pt-BR
+# element_classic_custom_welcome_hide_create_account: true
+# element_classic_custom_welcome_title: "{{ matrix_instance_name }}"
+# element_classic_custom_welcome_subtitle: Mensageria segura para equipes de saude
 
 # cinny_version: "v4.2.0"
 # synapse_enable_registration: false

@@ -80,6 +80,12 @@ element_classic_config_json:
   disable_custom_urls: true
 element_classic_branding_logo_file: ""
 element_classic_branding_background_file: ""
+element_classic_custom_welcome_enabled: false
+element_classic_custom_welcome_file: element-welcome.html
+element_classic_custom_welcome_locale: pt-BR
+element_classic_custom_welcome_hide_create_account: true
+element_classic_custom_welcome_title: "{{ matrix_instance_name }}"
+element_classic_custom_welcome_subtitle: Mensageria segura para equipes de saude
 
 postgres_db: synapse
 postgres_user: synapse

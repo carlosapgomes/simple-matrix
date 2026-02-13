@@ -119,12 +119,27 @@ Optional Element Classic deployment:
 - `element_classic_config_json` (default sets `default_server_config` to `matrix_fqdn` and disables custom URLs)
 - `element_classic_branding_logo_file` (optional; filename under `matrix_web_assets_host_path`, injected as `branding.auth_header_logo_url`)
 - `element_classic_branding_background_file` (optional; filename under `matrix_web_assets_host_path`, injected as `branding.welcome_background_url`)
+- `element_classic_custom_welcome_enabled` (default: `false`; renders a managed custom welcome page and injects `embedded_pages.welcome_url`)
+- `element_classic_custom_welcome_file` (default: `element-welcome.html`; output file under `matrix_web_assets_host_path`)
+- `element_classic_custom_welcome_locale` (default: `pt-BR`; stored into browser localStorage and used on login redirect)
+- `element_classic_custom_welcome_hide_create_account` (default: `true`; hides register CTA on the managed welcome page)
+- `element_classic_custom_welcome_title` (default: `{{ matrix_instance_name }}`)
+- `element_classic_custom_welcome_subtitle` (default: `Mensageria segura para equipes de saude`)
 
 To brand Element Classic with your own assets, place files in `matrix_web_assets_host_path`
 (default `/opt/matrix/cinny/assets`) and set:
 
-- `element_classic_branding_logo_file` (example: `logo.svg`)
+- `element_classic_branding_logo_file` (example: `logo.png`)
 - `element_classic_branding_background_file` (example: `background.jpg`)
+
+To use a managed welcome page (login-focused, with optional create-account hiding), set:
+
+- `element_classic_custom_welcome_enabled: true`
+- `element_classic_custom_welcome_locale: pt-BR`
+- `element_classic_custom_welcome_hide_create_account: true`
+
+Note: the welcome page URL is configured through Element's `embedded_pages.welcome_url`
+key (not through `branding`).
 
 Controller-driven asset sync (optional):
 
