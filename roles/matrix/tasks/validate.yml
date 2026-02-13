@@ -93,3 +93,10 @@
       - synapse_admin_upstream_port | int > 0
       - synapse_admin_upstream_port | int < 65536
     fail_msg: "synapse_admin_upstream_port must be between 1 and 65535."
+
+- name: Validate FluffyChat upstream port
+  ansible.builtin.assert:
+    that:
+      - fluffychat_upstream_port | int > 0
+      - fluffychat_upstream_port | int < 65536
+    fail_msg: "fluffychat_upstream_port must be between 1 and 65535."

@@ -179,6 +179,24 @@
       (rc={{ nginx_port_verified.rc }}, stdout='{{ nginx_port_verified.stdout | default('') | trim }}',
       stderr='{{ nginx_port_verified.stderr | default('') | trim }}').
 
+- name: Determine FluffyChat health check path
+  ansible.builtin.set_fact:
+    fluffychat_healthcheck_path: >-
+      {{ '/' if matrix_web_default_client_normalized == 'fluffychat'
+      else (matrix_web_secondary_path_normalized ~ '/') }}
+  when: matrix_web_default_client_normalized == 'fluffychat' or matrix_web_secondary_client_normalized == 'fluffychat'
+
+- name: Wait for FluffyChat to respond through nginx
+  ansible.builtin.uri:
+    url: "http://127.0.0.1:8080{{ fluffychat_healthcheck_path }}"
+    method: GET
+    status_code: 200
+  register: fluffychat_health
+  retries: 20
+  delay: 6
+  until: fluffychat_health.status == 200
+  when: matrix_web_default_client_normalized == 'fluffychat' or matrix_web_secondary_client_normalized == 'fluffychat'
+
 - name: Wait for Synapse to respond
   ansible.builtin.uri:
     url: http://127.0.0.1:8080/_matrix/client/versions

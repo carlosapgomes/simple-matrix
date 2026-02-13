@@ -110,6 +110,7 @@ Optional Cinny source-build mode:
 Optional FluffyChat deployment:
 
 - `fluffychat_image` (default: `ghcr.io/etkecc/fluffychat-web:latest`)
+- `fluffychat_upstream_port` (default: `8080`)
 - `fluffychat_config_container_path` (default: `/usr/share/nginx/html/config.json`)
 - `fluffychat_config_json` (default includes `defaultHomeserver` and disables custom homeservers)
 

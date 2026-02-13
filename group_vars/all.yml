@@ -24,6 +24,7 @@ backup_retention_days: 14
 # matrix_web_secondary_client: fluffychat
 # matrix_web_secondary_path: /chat2
 # fluffychat_image: ghcr.io/etkecc/fluffychat-web:latest
+# fluffychat_upstream_port: 8080
 # fluffychat_config_container_path: /usr/share/nginx/html/config.json
 # fluffychat_config_json:
 #   defaultHomeserver: "https://{{ matrix_fqdn }}"
