@@ -27,6 +27,7 @@
     - "{{ matrix_home }}/nginx"
     - "{{ matrix_home }}/cinny"
     - "{{ matrix_home }}/fluffychat"
+    - "{{ matrix_home }}/synapse-admin"
     - "{{ matrix_home }}/backup"
     - "{{ matrix_data_dir }}"
     - "{{ matrix_data_dir }}/postgres"

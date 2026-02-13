@@ -44,6 +44,8 @@ services:
     environment:
       REACT_APP_SERVER: "https://{{ matrix_fqdn }}"
       REACT_APP_SERVER_NAME: "{{ matrix_instance_name }}"
+    volumes:
+      - "{{ matrix_home }}/synapse-admin/config.json:{{ synapse_admin_config_container_path }}:ro"
     restart: unless-stopped
     networks:
       - matrix_net

@@ -132,6 +132,14 @@
     mode: "0644"
   register: nginx_config_render
 
+- name: Render Synapse Admin config
+  ansible.builtin.template:
+    src: synapse-admin.config.json.j2
+    dest: "{{ matrix_home }}/synapse-admin/config.json"
+    owner: "{{ matrix_user }}"
+    group: "{{ matrix_user }}"
+    mode: "0644"
+
 - name: Render Cinny config
   ansible.builtin.template:
     src: cinny.config.json.j2

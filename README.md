@@ -125,6 +125,8 @@ Optional Synapse Admin tuning:
 
 - `synapse_admin_upstream_port` (default: `8080`, set `80` if using older image variants)
 - `synapse_admin_restrict_baseurl` (default: `https://{{ matrix_fqdn }}`; published via `/.well-known/matrix/client` as `cc.etke.synapse-admin.restrictBaseUrl`)
+- `synapse_admin_config_container_path` (default: `/app/config.json`)
+- `synapse_admin_config_json` (default sets `restrictBaseUrl`; rendered to `/opt/matrix/synapse-admin/config.json` and mounted into container)
 
 Optional registration policy:
 
