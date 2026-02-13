@@ -100,3 +100,10 @@
       - fluffychat_upstream_port | int > 0
       - fluffychat_upstream_port | int < 65536
     fail_msg: "fluffychat_upstream_port must be between 1 and 65535."
+
+- name: Validate Synapse Admin restrict base URL format
+  ansible.builtin.assert:
+    that:
+      - synapse_admin_restrict_baseurl | string | length > 0
+      - synapse_admin_restrict_baseurl is match('^https?://')
+    fail_msg: "synapse_admin_restrict_baseurl must start with http:// or https://."

@@ -20,6 +20,7 @@ backup_retention_days: 14
 # firewall_backend: ufw
 # firewall_allow_ssh: true
 # firewall_ssh_port: 22
+# synapse_admin_restrict_baseurl: "https://{{ matrix_fqdn }}"
 # matrix_web_default_client: cinny
 # matrix_web_secondary_client: fluffychat
 # matrix_web_secondary_path: /chat2
