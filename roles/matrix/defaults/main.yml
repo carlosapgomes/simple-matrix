@@ -89,3 +89,8 @@ synapse_enable_registration_without_verification: false
 
 # Cinny login UX
 cinny_hide_register_prompt: "{{ not (synapse_enable_registration | bool) }}"
+
+# Reset script deployment
+matrix_reset_script_enabled: true
+matrix_reset_script_path: "{{ matrix_home }}/reset-matrix.sh"
+matrix_reset_remove_backups: true

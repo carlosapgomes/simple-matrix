@@ -131,6 +131,12 @@ Optional registration policy:
 - `synapse_enable_registration` (default: `false`)
 - `synapse_enable_registration_without_verification` (default: `false`)
 
+Optional reset script deployment:
+
+- `matrix_reset_script_enabled` (default: `true`)
+- `matrix_reset_script_path` (default: `/opt/matrix/reset-matrix.sh`)
+- `matrix_reset_remove_backups` (default: `true`)
+
 Security best practice: store secrets in Ansible Vault rather than plaintext.
 
 ## Using Ansible Vault (Recommended)
@@ -194,6 +200,27 @@ Security best practice:
 - Cloudflared runs as a systemd service and forwards `https://chat.hospital.example` to `http://localhost:8080`.
 - Backups are stored under `/opt/matrix/backups`.
  - Rootless Docker runs as a systemd user service for `matrix`.
+
+## Resetting a Dev/Test Deployment
+
+The role deploys a reset helper script on the managed node (default path: `/opt/matrix/reset-matrix.sh`).
+
+Run on the managed node as root (or via sudo):
+
+```bash
+sudo /opt/matrix/reset-matrix.sh
+```
+
+This script will:
+
+- Stop the stack (`docker compose down`) if compose file exists
+- Remove `/opt/matrix/data/postgres`
+- Remove `/opt/matrix/data/synapse`
+- Remove `/opt/matrix/data/media_store`
+- Remove `/opt/matrix/.secrets`
+- Optionally remove `/opt/matrix/backups` when `matrix_reset_remove_backups=true`
+
+After running it, execute the Ansible playbook again from the control node to provision a fresh instance.
 
 ## Security Best Practices
 
