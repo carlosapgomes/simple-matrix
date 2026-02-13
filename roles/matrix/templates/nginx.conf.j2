@@ -19,11 +19,18 @@ http {
     server_name _;
 
     client_max_body_size 50m;
+{% set matrix_client_well_known = {"m.homeserver": {"base_url": "https://" ~ matrix_fqdn}} %}
+{% if synapse_admin_restrict_baseurl | default("", true) | string | length > 0 %}
+{% set matrix_client_well_known = matrix_client_well_known | combine({"cc.etke.synapse-admin": {"restrictBaseUrl": synapse_admin_restrict_baseurl}}) %}
+{% endif %}
+{% if synapse_admin_well_known_homeserver | default("", true) | string | length > 0 %}
+{% set matrix_client_well_known = matrix_client_well_known | combine({"io.famedly.login": {"homeserver": synapse_admin_well_known_homeserver}}) %}
+{% endif %}
 
     location = /.well-known/matrix/client {
       default_type application/json;
       add_header Access-Control-Allow-Origin * always;
-      return 200 '{"m.homeserver":{"base_url":"https://{{ matrix_fqdn }}"}{% if synapse_admin_restrict_baseurl | default("", true) | string | length > 0 %},"cc.etke.synapse-admin":{"restrictBaseUrl":"{{ synapse_admin_restrict_baseurl }}"}{% endif %}}';
+      return 200 '{{ matrix_client_well_known | to_json }}';
     }
 
     location = /.well-known/matrix/server {

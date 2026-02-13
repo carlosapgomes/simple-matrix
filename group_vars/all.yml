@@ -21,7 +21,8 @@ backup_retention_days: 14
 # firewall_allow_ssh: true
 # firewall_ssh_port: 22
 # synapse_admin_restrict_baseurl: "https://{{ matrix_fqdn }}"
-# synapse_admin_config_container_path: /app/config.json
+# synapse_admin_well_known_homeserver: "https://{{ matrix_fqdn }}"
+# synapse_admin_config_container_path: /var/public/config.json
 # synapse_admin_config_json:
 #   restrictBaseUrl: "https://{{ matrix_fqdn }}"
 # matrix_web_default_client: cinny

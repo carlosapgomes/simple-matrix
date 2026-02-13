@@ -40,7 +40,8 @@ nginx_image: docker.io/nginx:stable
 synapse_admin_image: docker.io/etkecc/synapse-admin:latest
 synapse_admin_upstream_port: 8080
 synapse_admin_restrict_baseurl: "https://{{ matrix_fqdn }}"
-synapse_admin_config_container_path: /app/config.json
+synapse_admin_well_known_homeserver: "https://{{ matrix_fqdn }}"
+synapse_admin_config_container_path: /var/public/config.json
 synapse_admin_config_json:
   restrictBaseUrl: "{{ synapse_admin_restrict_baseurl }}"
 cloudflared_image: docker.io/cloudflare/cloudflared:latest

@@ -207,6 +207,27 @@
   delay: 6
   until: synapse_health.status == 200
 
+- name: Wait for Matrix client well-known endpoint
+  ansible.builtin.uri:
+    url: http://127.0.0.1:8080/.well-known/matrix/client
+    method: GET
+    status_code: 200
+    return_content: true
+  register: matrix_client_well_known
+  retries: 20
+  delay: 6
+  until: matrix_client_well_known.status == 200
+
+- name: Assert Matrix client well-known includes Synapse Admin homeserver hint
+  ansible.builtin.assert:
+    that:
+      - matrix_client_well_known.json['io.famedly.login'] is defined
+      - matrix_client_well_known.json['io.famedly.login']['homeserver'] == synapse_admin_well_known_homeserver
+    fail_msg: >-
+      /.well-known/matrix/client does not expose io.famedly.login.homeserver as expected
+      (expected='{{ synapse_admin_well_known_homeserver }}',
+      got='{{ matrix_client_well_known.json['io.famedly.login']['homeserver'] | default('') }}').
+
 - name: Check if admin user exists
   ansible.builtin.command: >-
     docker compose
