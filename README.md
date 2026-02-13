@@ -100,6 +100,8 @@ Optional web client routing:
 - `matrix_web_default_client` (default: `cinny`, allowed: `cinny`, `element_classic`)
 - `matrix_web_secondary_client` (default: empty; optional second client: `cinny` or `element_classic`)
 - `matrix_web_secondary_path` (default: `/chat2`; required when secondary client is enabled)
+- `matrix_web_assets_url_path` (default: `/matrix-assets`; static assets URL prefix served by nginx)
+- `matrix_web_assets_host_path` (default: `/opt/matrix/cinny/assets`; source folder mounted read-only into nginx)
 
 Optional Cinny source-build mode:
 
@@ -113,6 +115,14 @@ Optional Element Classic deployment:
 - `element_classic_upstream_port` (default: `80`)
 - `element_classic_config_container_path` (default: `/app/config.json`)
 - `element_classic_config_json` (default sets `default_server_config` to `matrix_fqdn` and disables custom URLs)
+- `element_classic_branding_logo_file` (optional; filename under `matrix_web_assets_host_path`, injected as `branding.auth_header_logo_url`)
+- `element_classic_branding_background_file` (optional; filename under `matrix_web_assets_host_path`, injected as `branding.welcome_background_url`)
+
+To brand Element Classic with your own assets, place files in `matrix_web_assets_host_path`
+(default `/opt/matrix/cinny/assets`) and set:
+
+- `element_classic_branding_logo_file` (example: `logo.svg`)
+- `element_classic_branding_background_file` (example: `background.jpg`)
 
 Optional Docker rootless tuning:
 

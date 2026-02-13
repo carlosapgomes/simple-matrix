@@ -87,6 +87,21 @@
       (/_matrix, /_synapse, /admin, /.well-known).
   when: matrix_web_secondary_client_normalized | length > 0
 
+- name: Validate custom assets URL path
+  ansible.builtin.assert:
+    that:
+      - matrix_web_assets_url_path.startswith('/')
+      - matrix_web_assets_url_path != '/'
+      - not matrix_web_assets_url_path.endswith('/')
+      - matrix_web_assets_url_path is match('^/[A-Za-z0-9._~!$&()*+,;=:@%/-]+$')
+      - not matrix_web_assets_url_path.startswith('/_matrix')
+      - not matrix_web_assets_url_path.startswith('/_synapse')
+      - not (matrix_web_assets_url_path == '/admin' or matrix_web_assets_url_path.startswith('/admin/'))
+      - not matrix_web_assets_url_path.startswith('/.well-known')
+    fail_msg: >-
+      matrix_web_assets_url_path must be a safe absolute path and must not overlap
+      reserved routes (/_matrix, /_synapse, /admin, /.well-known).
+
 - name: Validate Synapse Admin upstream port
   ansible.builtin.assert:
     that:
@@ -119,6 +134,24 @@
     that:
       - element_classic_config_json is mapping
     fail_msg: "element_classic_config_json must be a YAML object (mapping)."
+
+- name: Validate Element Classic branding logo file name
+  ansible.builtin.assert:
+    that:
+      - element_classic_branding_logo_file | trim | length == 0 or element_classic_branding_logo_file is match('^[^/].*')
+      - element_classic_branding_logo_file | trim | length == 0 or ('..' not in element_classic_branding_logo_file)
+    fail_msg: >-
+      element_classic_branding_logo_file must be empty or a relative filename/path
+      within matrix_web_assets_host_path (no leading '/' and no '..').
+
+- name: Validate Element Classic branding background file name
+  ansible.builtin.assert:
+    that:
+      - element_classic_branding_background_file | trim | length == 0 or element_classic_branding_background_file is match('^[^/].*')
+      - element_classic_branding_background_file | trim | length == 0 or ('..' not in element_classic_branding_background_file)
+    fail_msg: >-
+      element_classic_branding_background_file must be empty or a relative filename/path
+      within matrix_web_assets_host_path (no leading '/' and no '..').
 
 - name: Validate Synapse Admin well-known homeserver format
   ansible.builtin.assert:

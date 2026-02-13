@@ -1,1 +1,12 @@
-{{ element_classic_config_json | to_nice_json }}
+{% set element_classic_effective_config = element_classic_config_json %}
+{% set element_classic_branding = {} %}
+{% if element_classic_branding_logo_file | trim | length > 0 %}
+{% set element_classic_branding = element_classic_branding | combine({'auth_header_logo_url': matrix_web_assets_url_path ~ '/' ~ element_classic_branding_logo_file}) %}
+{% endif %}
+{% if element_classic_branding_background_file | trim | length > 0 %}
+{% set element_classic_branding = element_classic_branding | combine({'welcome_background_url': matrix_web_assets_url_path ~ '/' ~ element_classic_branding_background_file}) %}
+{% endif %}
+{% if element_classic_branding | length > 0 %}
+{% set element_classic_effective_config = element_classic_effective_config | combine({'branding': element_classic_branding}, recursive=True) %}
+{% endif %}
+{{ element_classic_effective_config | to_nice_json }}

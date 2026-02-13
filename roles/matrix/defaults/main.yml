@@ -52,6 +52,8 @@ backup_image_local: matrix-backup:latest
 matrix_web_default_client: cinny
 matrix_web_secondary_client: ""
 matrix_web_secondary_path: /chat2
+matrix_web_assets_url_path: /matrix-assets
+matrix_web_assets_host_path: "{{ matrix_home }}/cinny/assets"
 
 # Cinny deployment mode
 # By default, use the upstream prebuilt image for reliability.
@@ -74,6 +76,8 @@ element_classic_config_json:
       base_url: "https://{{ matrix_fqdn }}"
       server_name: "{{ matrix_fqdn }}"
   disable_custom_urls: true
+element_classic_branding_logo_file: ""
+element_classic_branding_background_file: ""
 
 postgres_db: synapse
 postgres_user: synapse

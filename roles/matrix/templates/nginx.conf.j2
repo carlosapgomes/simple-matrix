@@ -69,6 +69,16 @@ http {
       proxy_set_header X-Forwarded-Prefix /admin;
     }
 
+    location = {{ matrix_web_assets_url_path }} {
+      return 301 {{ matrix_web_assets_url_path }}/;
+    }
+
+    location {{ matrix_web_assets_url_path }}/ {
+      alias /srv/matrix-assets/;
+      autoindex off;
+      add_header Cache-Control "public, max-age=3600";
+    }
+
 {% if matrix_web_secondary_client_normalized | length > 0 %}
     location = {{ matrix_web_secondary_path_normalized }} {
       return 301 {{ matrix_web_secondary_path_normalized }}/;
