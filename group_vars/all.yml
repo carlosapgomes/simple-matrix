@@ -30,6 +30,8 @@ backup_retention_days: 14
 # matrix_web_secondary_path: /chat2
 # matrix_web_assets_url_path: /matrix-assets
 # matrix_web_assets_host_path: "{{ matrix_home }}/cinny/assets"
+# matrix_web_assets_sync_from_controller: true
+# matrix_web_assets_local_path: "{{ playbook_dir }}/assets/matrix-web"
 # element_classic_image: docker.io/vectorim/element-web:latest
 # element_classic_upstream_port: 80
 # element_classic_config_container_path: /app/config.json

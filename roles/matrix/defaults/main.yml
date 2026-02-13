@@ -54,6 +54,8 @@ matrix_web_secondary_client: ""
 matrix_web_secondary_path: /chat2
 matrix_web_assets_url_path: /matrix-assets
 matrix_web_assets_host_path: "{{ matrix_home }}/cinny/assets"
+matrix_web_assets_sync_from_controller: true
+matrix_web_assets_local_path: "{{ playbook_dir }}/assets/matrix-web"
 
 # Cinny deployment mode
 # By default, use the upstream prebuilt image for reliability.

@@ -88,6 +88,27 @@
     backup_cron_hour: "{{ (backup_time.split(':'))[0] }}"
     backup_cron_minute: "{{ (backup_time.split(':'))[1] }}"
 
+- name: Check controller web assets directory
+  ansible.builtin.stat:
+    path: "{{ matrix_web_assets_local_path }}"
+  register: matrix_web_assets_local_dir
+  delegate_to: localhost
+  become: false
+  when: matrix_web_assets_sync_from_controller | bool
+
+- name: Copy controller web assets to managed host
+  ansible.builtin.copy:
+    src: "{{ matrix_web_assets_local_path }}/"
+    dest: "{{ matrix_web_assets_host_path }}/"
+    owner: "{{ matrix_user }}"
+    group: "{{ matrix_user }}"
+    mode: preserve
+    directory_mode: "0750"
+  when:
+    - matrix_web_assets_sync_from_controller | bool
+    - matrix_web_assets_local_dir.stat.exists | default(false)
+    - matrix_web_assets_local_dir.stat.isdir | default(false)
+
 - name: Render environment file
   ansible.builtin.template:
     src: env.j2

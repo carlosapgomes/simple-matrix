@@ -102,6 +102,8 @@ Optional web client routing:
 - `matrix_web_secondary_path` (default: `/chat2`; required when secondary client is enabled)
 - `matrix_web_assets_url_path` (default: `/matrix-assets`; static assets URL prefix served by nginx)
 - `matrix_web_assets_host_path` (default: `/opt/matrix/cinny/assets`; source folder mounted read-only into nginx)
+- `matrix_web_assets_sync_from_controller` (default: `true`; copy assets from control node if local folder exists)
+- `matrix_web_assets_local_path` (default: `{{ playbook_dir }}/assets/matrix-web`; control-node folder copied to `matrix_web_assets_host_path`)
 
 Optional Cinny source-build mode:
 
@@ -123,6 +125,11 @@ To brand Element Classic with your own assets, place files in `matrix_web_assets
 
 - `element_classic_branding_logo_file` (example: `logo.svg`)
 - `element_classic_branding_background_file` (example: `background.jpg`)
+
+Controller-driven asset sync (optional):
+
+- Put files on the control node under `assets/matrix-web/` in this repository (or override `matrix_web_assets_local_path`).
+- On playbook run, if that local folder exists, its contents are copied to `matrix_web_assets_host_path` on the managed host.
 
 Optional Docker rootless tuning:
 

@@ -102,6 +102,13 @@
       matrix_web_assets_url_path must be a safe absolute path and must not overlap
       reserved routes (/_matrix, /_synapse, /admin, /.well-known).
 
+- name: Validate controller assets sync settings
+  ansible.builtin.assert:
+    that:
+      - matrix_web_assets_local_path | string | length > 0
+    fail_msg: "matrix_web_assets_local_path must be a non-empty path."
+  when: matrix_web_assets_sync_from_controller | bool
+
 - name: Validate Synapse Admin upstream port
   ansible.builtin.assert:
     that:
