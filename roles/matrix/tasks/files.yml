@@ -139,6 +139,16 @@
     owner: "{{ matrix_user }}"
     group: "{{ matrix_user }}"
     mode: "0644"
+  when: matrix_web_default_client_normalized == 'cinny' or matrix_web_secondary_client_normalized == 'cinny'
+
+- name: Render FluffyChat config
+  ansible.builtin.template:
+    src: fluffychat.config.json.j2
+    dest: "{{ matrix_home }}/fluffychat/config.json"
+    owner: "{{ matrix_user }}"
+    group: "{{ matrix_user }}"
+    mode: "0644"
+  when: matrix_web_default_client_normalized == 'fluffychat' or matrix_web_secondary_client_normalized == 'fluffychat'
 
 - name: Render docker-compose file
   ansible.builtin.template:

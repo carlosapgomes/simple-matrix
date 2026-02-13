@@ -43,6 +43,11 @@ cloudflared_image: docker.io/cloudflare/cloudflared:latest
 backup_image: docker.io/alpine:3.19
 backup_image_local: matrix-backup:latest
 
+# Matrix web clients
+matrix_web_default_client: cinny
+matrix_web_secondary_client: ""
+matrix_web_secondary_path: /chat2
+
 # Cinny deployment mode
 # By default, use the upstream prebuilt image for reliability.
 cinny_build_from_source: false
@@ -53,6 +58,13 @@ cinny_image: "{{ cinny_image_local if (cinny_build_from_source | bool) else cinn
 cinny_repo: https://github.com/cinnyapp/cinny.git
 cinny_version: v4.10.2
 cinny_build_dir: "{{ matrix_home }}/cinny/src"
+
+# FluffyChat web deployment
+fluffychat_image: ghcr.io/etkecc/fluffychat-web:latest
+fluffychat_config_container_path: /usr/share/nginx/html/config.json
+fluffychat_config_json:
+  defaultHomeserver: "https://{{ matrix_fqdn }}"
+  allowCustomHomeservers: false
 
 postgres_db: synapse
 postgres_user: synapse

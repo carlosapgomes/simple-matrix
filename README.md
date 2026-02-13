@@ -95,11 +95,23 @@ Optional Cinny login UX:
 
 - `cinny_hide_register_prompt` (default: follows `synapse_enable_registration`; hides login-page register CTA when registration is disabled)
 
+Optional web client routing:
+
+- `matrix_web_default_client` (default: `cinny`, allowed: `cinny`, `fluffychat`)
+- `matrix_web_secondary_client` (default: empty; optional second client: `cinny` or `fluffychat`)
+- `matrix_web_secondary_path` (default: `/chat2`; required when secondary client is enabled)
+
 Optional Cinny source-build mode:
 
 - `cinny_build_from_source` (default: `false`)
 - `cinny_image_prebuilt` (default: `ghcr.io/cinnyapp/cinny:latest`)
 - `cinny_image_local` (default: `cinny:local`)
+
+Optional FluffyChat deployment:
+
+- `fluffychat_image` (default: `ghcr.io/etkecc/fluffychat-web:latest`)
+- `fluffychat_config_container_path` (default: `/usr/share/nginx/html/config.json`)
+- `fluffychat_config_json` (default includes `defaultHomeserver` and disables custom homeservers)
 
 Optional Docker rootless tuning:
 
@@ -163,7 +175,8 @@ Security best practice:
 - Rootless Docker + Docker Compose
 - Synapse + PostgreSQL
 - Synapse Admin UI under `/admin`
-- Cinny web client under `/`
+- Primary Matrix web client under `/` (`cinny` by default)
+- Optional secondary Matrix web client under a configurable path (for example `/chat2`)
 - nginx reverse proxy published on host port `8080`
 - Cloudflare Tunnel systemd service
 - Host firewall via `ufw`

@@ -5,7 +5,9 @@
     dest: "{{ cinny_build_dir }}"
     version: "{{ cinny_version }}"
     force: false
-  when: cinny_build_from_source | bool
+  when: >-
+    cinny_build_from_source | bool and
+    (matrix_web_default_client_normalized == 'cinny' or matrix_web_secondary_client_normalized == 'cinny')
   become: true
   become_user: "{{ matrix_user }}"
 
@@ -30,7 +32,9 @@
   register: cinny_image_check
   failed_when: false
   changed_when: false
-  when: cinny_build_from_source | bool
+  when: >-
+    cinny_build_from_source | bool and
+    (matrix_web_default_client_normalized == 'cinny' or matrix_web_secondary_client_normalized == 'cinny')
   args:
     chdir: "{{ matrix_home }}"
   become: true
@@ -46,7 +50,10 @@
     -f {{ matrix_home }}/docker-compose.yml
     -p {{ docker_compose_project }}
     build cinny
-  when: cinny_build_from_source | bool and cinny_image_check.rc != 0
+  when: >-
+    cinny_build_from_source | bool and
+    (matrix_web_default_client_normalized == 'cinny' or matrix_web_secondary_client_normalized == 'cinny') and
+    cinny_image_check.rc != 0
   register: cinny_build_result
   retries: 3
   delay: 10

@@ -42,6 +42,51 @@
       must publish host port 8080 for local health checks and Cloudflare tunnel
       forwarding.
 
+- name: Normalize web client routing settings
+  ansible.builtin.set_fact:
+    matrix_web_default_client_normalized: "{{ matrix_web_default_client | lower | trim }}"
+    matrix_web_secondary_client_normalized: "{{ matrix_web_secondary_client | default('', true) | lower | trim }}"
+    matrix_web_secondary_path_normalized: "{{ matrix_web_secondary_path | trim }}"
+
+- name: Validate default web client
+  ansible.builtin.assert:
+    that:
+      - matrix_web_default_client_normalized in ['cinny', 'fluffychat']
+    fail_msg: "matrix_web_default_client must be 'cinny' or 'fluffychat'."
+
+- name: Validate secondary web client
+  ansible.builtin.assert:
+    that:
+      - matrix_web_secondary_client_normalized | length == 0 or matrix_web_secondary_client_normalized in ['cinny', 'fluffychat']
+      - matrix_web_secondary_client_normalized | length == 0 or matrix_web_secondary_client_normalized != matrix_web_default_client_normalized
+    fail_msg: >-
+      matrix_web_secondary_client must be empty, 'cinny', or 'fluffychat',
+      and cannot match matrix_web_default_client.
+
+- name: Validate secondary web client path
+  ansible.builtin.assert:
+    that:
+      - matrix_web_secondary_path_normalized.startswith('/')
+      - matrix_web_secondary_path_normalized != '/'
+      - not matrix_web_secondary_path_normalized.endswith('/')
+      - matrix_web_secondary_path_normalized is match('^/[A-Za-z0-9._~!$&()*+,;=:@%/-]+$')
+    fail_msg: >-
+      matrix_web_secondary_path must start with '/', must not be '/', and must not
+      end with '/'. Example: /chat2
+  when: matrix_web_secondary_client_normalized | length > 0
+
+- name: Validate secondary path does not overlap Matrix reserved routes
+  ansible.builtin.assert:
+    that:
+      - not matrix_web_secondary_path_normalized.startswith('/_matrix')
+      - not matrix_web_secondary_path_normalized.startswith('/_synapse')
+      - not (matrix_web_secondary_path_normalized == '/admin' or matrix_web_secondary_path_normalized.startswith('/admin/'))
+      - not matrix_web_secondary_path_normalized.startswith('/.well-known')
+    fail_msg: >-
+      matrix_web_secondary_path overlaps a reserved route
+      (/_matrix, /_synapse, /admin, /.well-known).
+  when: matrix_web_secondary_client_normalized | length > 0
+
 - name: Validate Synapse Admin upstream port
   ansible.builtin.assert:
     that:

@@ -6,6 +6,6 @@
   "allowCustomHomeservers": false,
   "hashRouter": {
     "enabled": true,
-    "basename": "/"
+    "basename": "{{ '/' if matrix_web_default_client_normalized == 'cinny' else matrix_web_secondary_path_normalized }}"
   }
 }

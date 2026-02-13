@@ -1,3 +1,5 @@
+{% set cinny_enabled = matrix_web_default_client_normalized == 'cinny' or matrix_web_secondary_client_normalized == 'cinny' %}
+{% set fluffychat_enabled = matrix_web_default_client_normalized == 'fluffychat' or matrix_web_secondary_client_normalized == 'fluffychat' %}
 services:
   postgres:
     image: {{ postgres_image }}
@@ -46,6 +48,7 @@ services:
     networks:
       - matrix_net
 
+{% if cinny_enabled %}
   cinny:
     image: {{ cinny_image }}
 {% if cinny_build_from_source | bool %}
@@ -57,13 +60,29 @@ services:
     restart: unless-stopped
     networks:
       - matrix_net
+{% endif %}
+
+{% if fluffychat_enabled %}
+  fluffychat:
+    image: {{ fluffychat_image }}
+    volumes:
+      - "{{ matrix_home }}/fluffychat/config.json:{{ fluffychat_config_container_path }}:ro"
+    restart: unless-stopped
+    networks:
+      - matrix_net
+{% endif %}
 
   nginx:
     image: {{ nginx_image }}
     depends_on:
       - synapse
       - synapse-admin
+{% if cinny_enabled %}
       - cinny
+{% endif %}
+{% if fluffychat_enabled %}
+      - fluffychat
+{% endif %}
     ports:
       - "8080:80"
     volumes:
