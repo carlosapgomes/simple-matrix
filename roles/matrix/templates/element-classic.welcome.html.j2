@@ -1,154 +1,83 @@
-<!doctype html>
-<html lang="{{ element_classic_custom_welcome_locale | replace('_', '-') }}">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>{{ element_classic_custom_welcome_title }}</title>
-  <style>
-    :root {
-      --fg: #0f172a;
-      --panel: rgba(255, 255, 255, 0.9);
-      --primary: #0f766e;
-      --primary-hover: #115e59;
-      --muted: #475569;
-    }
+{% set element_classic_route_prefix = '/' if matrix_web_default_client_normalized == 'element_classic' else (matrix_web_secondary_path_normalized ~ '/') %}
+{% set element_classic_login_url = element_classic_route_prefix ~ '#/login?lang=' ~ element_classic_custom_welcome_locale %}
+{% set element_classic_register_url = element_classic_route_prefix ~ '#/register' %}
+<style type="text/css">
+  .mx-welcome-wrap {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    box-sizing: border-box;
+    font-family: "Helvetica Neue", Arial, sans-serif;
+    color: #0f172a;
+  }
 
-    * { box-sizing: border-box; }
+  .mx-welcome-card {
+    width: min(560px, 100%);
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 16px;
+    box-shadow: 0 20px 60px rgba(15, 23, 42, 0.18);
+    padding: 28px;
+    text-align: center;
+  }
 
-    body {
-      margin: 0;
-      min-height: 100vh;
-      font-family: "Helvetica Neue", Arial, sans-serif;
-{% if element_classic_branding_background_file | trim | length > 0 %}
-      background: linear-gradient(rgba(255, 255, 255, 0.72), rgba(255, 255, 255, 0.72)),
-        url("{{ matrix_web_assets_url_path }}/{{ element_classic_branding_background_file }}") center/cover no-repeat fixed;
-{% else %}
-      background: linear-gradient(160deg, #e2f5f2, #f4f6f8);
-{% endif %}
-      color: var(--fg);
-      display: grid;
-      place-items: center;
-      padding: 24px;
-    }
+  .mx-welcome-logo {
+    display: block;
+    max-height: 56px;
+    max-width: 260px;
+    width: auto;
+    margin: 0 auto 20px;
+  }
 
-    .card {
-      width: min(560px, 100%);
-      background: var(--panel);
-      border-radius: 16px;
-      box-shadow: 0 20px 60px rgba(15, 23, 42, 0.18);
-      padding: 28px;
-      text-align: center;
-      backdrop-filter: blur(6px);
-    }
+  .mx-welcome-title {
+    margin: 0 0 10px;
+    font-size: clamp(1.5rem, 3.4vw, 2.1rem);
+    line-height: 1.2;
+  }
 
-    .logo {
-      display: block;
-      max-height: 56px;
-      max-width: 260px;
-      width: auto;
-      margin: 0 auto 20px;
-    }
+  .mx-welcome-subtitle {
+    margin: 0;
+    color: #475569;
+    font-size: 1rem;
+  }
 
-    h1 {
-      margin: 0 0 10px;
-      font-size: clamp(1.5rem, 3.4vw, 2.1rem);
-      line-height: 1.2;
-      letter-spacing: 0.01em;
-    }
+  .mx-welcome-actions {
+    margin-top: 24px;
+  }
 
-    p {
-      margin: 0;
-      color: var(--muted);
-      font-size: 1rem;
-    }
+  .mx-welcome-btn {
+    display: inline-block;
+    border-radius: 10px;
+    padding: 11px 18px;
+    text-decoration: none;
+    font-weight: 600;
+    margin: 6px;
+  }
 
-    .actions {
-      margin-top: 24px;
-      display: flex;
-      gap: 12px;
-      justify-content: center;
-      flex-wrap: wrap;
-    }
+  .mx-welcome-btn-primary {
+    background: #0f766e;
+    color: #ffffff;
+  }
 
-    .btn {
-      display: inline-block;
-      border-radius: 10px;
-      padding: 11px 18px;
-      text-decoration: none;
-      font-weight: 600;
-      transition: background-color 0.15s ease, transform 0.15s ease;
-    }
+  .mx-welcome-btn-secondary {
+    background: #e2e8f0;
+    color: #0f172a;
+  }
+</style>
 
-    .btn.primary {
-      background: var(--primary);
-      color: #fff;
-    }
-
-    .btn.primary:hover {
-      background: var(--primary-hover);
-      transform: translateY(-1px);
-    }
-
-    .btn.secondary {
-      background: #e2e8f0;
-      color: #0f172a;
-    }
-
-    .btn.secondary:hover {
-      background: #cbd5e1;
-      transform: translateY(-1px);
-    }
-  </style>
-</head>
-<body>
-  <main class="card">
+<div class="mx-welcome-wrap" lang="{{ element_classic_custom_welcome_locale | replace('_', '-') }}">
+  <div class="mx-welcome-card">
 {% if element_classic_branding_logo_file | trim | length > 0 %}
-    <img class="logo" src="{{ matrix_web_assets_url_path }}/{{ element_classic_branding_logo_file }}" alt="Logo">
+    <img class="mx-welcome-logo" src="{{ matrix_web_assets_url_path }}/{{ element_classic_branding_logo_file }}" alt="Logo">
 {% endif %}
-    <h1>{{ element_classic_custom_welcome_title }}</h1>
-    <p>{{ element_classic_custom_welcome_subtitle }}</p>
-    <div class="actions">
-      <a class="btn primary" id="login-button" href="/#/login">Entrar</a>
+    <h1 class="mx-welcome-title">{{ element_classic_custom_welcome_title }}</h1>
+    <p class="mx-welcome-subtitle">{{ element_classic_custom_welcome_subtitle }}</p>
+    <div class="mx-welcome-actions">
+      <a class="mx-welcome-btn mx-welcome-btn-primary" href="{{ element_classic_login_url }}" target="_parent">Entrar</a>
 {% if not (element_classic_custom_welcome_hide_create_account | bool) %}
-      <a class="btn secondary" id="register-button" href="/#/register">Criar conta</a>
+      <a class="mx-welcome-btn mx-welcome-btn-secondary" href="{{ element_classic_register_url }}" target="_parent">Criar conta</a>
 {% endif %}
     </div>
-  </main>
-
-  <script>
-    (function () {
-      var locale = {{ element_classic_custom_welcome_locale | to_json }};
-      var loginHref = "/#/login";
-      if (locale) {
-        loginHref += "?lang=" + encodeURIComponent(locale);
-        try {
-          localStorage.setItem("mx_language", locale);
-          localStorage.setItem("mx_lhs_language", locale);
-          localStorage.setItem("language", locale);
-        } catch (err) {
-          // Ignore storage issues and continue with hash redirect.
-        }
-      }
-
-      var loginButton = document.getElementById("login-button");
-      if (loginButton) {
-        loginButton.setAttribute("href", loginHref);
-        loginButton.addEventListener("click", function (event) {
-          event.preventDefault();
-          var target = window.top && window.top !== window ? window.top : window;
-          target.location.href = loginHref;
-        });
-      }
-
-      var registerButton = document.getElementById("register-button");
-      if (registerButton) {
-        registerButton.addEventListener("click", function (event) {
-          event.preventDefault();
-          var target = window.top && window.top !== window ? window.top : window;
-          target.location.href = "/#/register";
-        });
-      }
-    })();
-  </script>
-</body>
-</html>
+  </div>
+</div>

@@ -11,6 +11,6 @@
 {% endif %}
 {% if element_classic_custom_welcome_enabled | bool %}
 {% set element_classic_embedded_pages = element_classic_effective_config.get('embedded_pages', {}) | combine({'welcome_url': matrix_web_assets_url_path ~ '/' ~ element_classic_custom_welcome_file}, recursive=True) %}
-{% set element_classic_effective_config = element_classic_effective_config | combine({'embedded_pages': element_classic_embedded_pages, 'disable_login_language_selector': true}, recursive=True) %}
+{% set element_classic_effective_config = element_classic_effective_config | combine({'embedded_pages': element_classic_embedded_pages, 'disable_login_language_selector': true, 'login_for_welcome': false}, recursive=True) %}
 {% endif %}
 {{ element_classic_effective_config | to_nice_json }}
