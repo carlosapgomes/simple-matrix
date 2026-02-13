@@ -102,12 +102,44 @@
     dest: "{{ matrix_web_assets_host_path }}/"
     owner: "{{ matrix_user }}"
     group: "{{ matrix_user }}"
-    mode: preserve
-    directory_mode: "0750"
+    mode: "0644"
+    directory_mode: "0755"
   when:
     - matrix_web_assets_sync_from_controller | bool
     - matrix_web_assets_local_dir.stat.exists | default(false)
     - matrix_web_assets_local_dir.stat.isdir | default(false)
+
+- name: Find web asset subdirectories
+  ansible.builtin.find:
+    paths: "{{ matrix_web_assets_host_path }}"
+    file_type: directory
+    recurse: true
+  register: matrix_web_assets_dirs
+
+- name: Ensure web asset subdirectories are traversable
+  ansible.builtin.file:
+    path: "{{ item.path }}"
+    state: directory
+    owner: "{{ matrix_user }}"
+    group: "{{ matrix_user }}"
+    mode: "0755"
+  loop: "{{ matrix_web_assets_dirs.files }}"
+
+- name: Find web asset files
+  ansible.builtin.find:
+    paths: "{{ matrix_web_assets_host_path }}"
+    file_type: file
+    recurse: true
+  register: matrix_web_assets_files
+
+- name: Ensure web asset files are readable
+  ansible.builtin.file:
+    path: "{{ item.path }}"
+    state: file
+    owner: "{{ matrix_user }}"
+    group: "{{ matrix_user }}"
+    mode: "0644"
+  loop: "{{ matrix_web_assets_files.files }}"
 
 - name: Render environment file
   ansible.builtin.template:
