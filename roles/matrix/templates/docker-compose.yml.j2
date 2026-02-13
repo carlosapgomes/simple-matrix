@@ -1,5 +1,5 @@
 {% set cinny_enabled = matrix_web_default_client_normalized == 'cinny' or matrix_web_secondary_client_normalized == 'cinny' %}
-{% set fluffychat_enabled = matrix_web_default_client_normalized == 'fluffychat' or matrix_web_secondary_client_normalized == 'fluffychat' %}
+{% set element_classic_enabled = matrix_web_default_client_normalized == 'element_classic' or matrix_web_secondary_client_normalized == 'element_classic' %}
 services:
   postgres:
     image: {{ postgres_image }}
@@ -64,11 +64,11 @@ services:
       - matrix_net
 {% endif %}
 
-{% if fluffychat_enabled %}
-  fluffychat:
-    image: {{ fluffychat_image }}
+{% if element_classic_enabled %}
+  element-classic:
+    image: {{ element_classic_image }}
     volumes:
-      - "{{ matrix_home }}/fluffychat/config.json:{{ fluffychat_config_container_path }}:ro"
+      - "{{ matrix_home }}/element-classic/config.json:{{ element_classic_config_container_path }}:ro"
     restart: unless-stopped
     networks:
       - matrix_net
@@ -82,8 +82,8 @@ services:
 {% if cinny_enabled %}
       - cinny
 {% endif %}
-{% if fluffychat_enabled %}
-      - fluffychat
+{% if element_classic_enabled %}
+      - element-classic
 {% endif %}
     ports:
       - "8080:80"

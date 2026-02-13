@@ -97,8 +97,8 @@ Optional Cinny login UX:
 
 Optional web client routing:
 
-- `matrix_web_default_client` (default: `cinny`, allowed: `cinny`, `fluffychat`)
-- `matrix_web_secondary_client` (default: empty; optional second client: `cinny` or `fluffychat`)
+- `matrix_web_default_client` (default: `cinny`, allowed: `cinny`, `element_classic`)
+- `matrix_web_secondary_client` (default: empty; optional second client: `cinny` or `element_classic`)
 - `matrix_web_secondary_path` (default: `/chat2`; required when secondary client is enabled)
 
 Optional Cinny source-build mode:
@@ -107,12 +107,12 @@ Optional Cinny source-build mode:
 - `cinny_image_prebuilt` (default: `ghcr.io/cinnyapp/cinny:latest`)
 - `cinny_image_local` (default: `cinny:local`)
 
-Optional FluffyChat deployment:
+Optional Element Classic deployment:
 
-- `fluffychat_image` (default: `ghcr.io/etkecc/fluffychat-web:latest`)
-- `fluffychat_upstream_port` (default: `8080`)
-- `fluffychat_config_container_path` (default: `/usr/share/nginx/html/config.json`)
-- `fluffychat_config_json` (default includes `defaultHomeserver` and disables custom homeservers)
+- `element_classic_image` (default: `docker.io/vectorim/element-web:latest`)
+- `element_classic_upstream_port` (default: `80`)
+- `element_classic_config_container_path` (default: `/app/config.json`)
+- `element_classic_config_json` (default sets `default_server_config` to `matrix_fqdn` and disables custom URLs)
 
 Optional Docker rootless tuning:
 

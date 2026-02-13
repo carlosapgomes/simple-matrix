@@ -64,13 +64,16 @@ cinny_repo: https://github.com/cinnyapp/cinny.git
 cinny_version: v4.10.2
 cinny_build_dir: "{{ matrix_home }}/cinny/src"
 
-# FluffyChat web deployment
-fluffychat_image: ghcr.io/etkecc/fluffychat-web:latest
-fluffychat_upstream_port: 8080
-fluffychat_config_container_path: /usr/share/nginx/html/config.json
-fluffychat_config_json:
-  defaultHomeserver: "https://{{ matrix_fqdn }}"
-  allowCustomHomeservers: false
+# Element Classic web deployment
+element_classic_image: docker.io/vectorim/element-web:latest
+element_classic_upstream_port: 80
+element_classic_config_container_path: /app/config.json
+element_classic_config_json:
+  default_server_config:
+    m.homeserver:
+      base_url: "https://{{ matrix_fqdn }}"
+      server_name: "{{ matrix_fqdn }}"
+  disable_custom_urls: true
 
 postgres_db: synapse
 postgres_user: synapse

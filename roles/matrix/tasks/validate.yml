@@ -51,16 +51,16 @@
 - name: Validate default web client
   ansible.builtin.assert:
     that:
-      - matrix_web_default_client_normalized in ['cinny', 'fluffychat']
-    fail_msg: "matrix_web_default_client must be 'cinny' or 'fluffychat'."
+      - matrix_web_default_client_normalized in ['cinny', 'element_classic']
+    fail_msg: "matrix_web_default_client must be 'cinny' or 'element_classic'."
 
 - name: Validate secondary web client
   ansible.builtin.assert:
     that:
-      - matrix_web_secondary_client_normalized | length == 0 or matrix_web_secondary_client_normalized in ['cinny', 'fluffychat']
+      - matrix_web_secondary_client_normalized | length == 0 or matrix_web_secondary_client_normalized in ['cinny', 'element_classic']
       - matrix_web_secondary_client_normalized | length == 0 or matrix_web_secondary_client_normalized != matrix_web_default_client_normalized
     fail_msg: >-
-      matrix_web_secondary_client must be empty, 'cinny', or 'fluffychat',
+      matrix_web_secondary_client must be empty, 'cinny', or 'element_classic',
       and cannot match matrix_web_default_client.
 
 - name: Validate secondary web client path
@@ -94,12 +94,12 @@
       - synapse_admin_upstream_port | int < 65536
     fail_msg: "synapse_admin_upstream_port must be between 1 and 65535."
 
-- name: Validate FluffyChat upstream port
+- name: Validate Element Classic upstream port
   ansible.builtin.assert:
     that:
-      - fluffychat_upstream_port | int > 0
-      - fluffychat_upstream_port | int < 65536
-    fail_msg: "fluffychat_upstream_port must be between 1 and 65535."
+      - element_classic_upstream_port | int > 0
+      - element_classic_upstream_port | int < 65536
+    fail_msg: "element_classic_upstream_port must be between 1 and 65535."
 
 - name: Validate Synapse Admin restrict base URL format
   ansible.builtin.assert:
@@ -113,6 +113,12 @@
     that:
       - synapse_admin_config_json is mapping
     fail_msg: "synapse_admin_config_json must be a YAML object (mapping)."
+
+- name: Validate Element Classic config object type
+  ansible.builtin.assert:
+    that:
+      - element_classic_config_json is mapping
+    fail_msg: "element_classic_config_json must be a YAML object (mapping)."
 
 - name: Validate Synapse Admin well-known homeserver format
   ansible.builtin.assert:
