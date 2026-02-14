@@ -69,7 +69,10 @@ cinny_version: v4.10.2
 cinny_build_dir: "{{ matrix_home }}/cinny/src"
 
 # Element Classic web deployment
-element_classic_image: docker.io/vectorim/element-web:latest
+element_classic_build_custom: false
+element_classic_image_prebuilt: docker.io/vectorim/element-web:latest
+element_classic_image_local: element-classic:custom
+element_classic_image: "{{ element_classic_image_local if (element_classic_build_custom | bool) else element_classic_image_prebuilt }}"
 element_classic_upstream_port: 80
 element_classic_config_container_path: /app/config.json
 element_classic_config_json:
@@ -78,11 +81,15 @@ element_classic_config_json:
       base_url: "https://{{ matrix_fqdn }}"
       server_name: "{{ matrix_fqdn }}"
   disable_custom_urls: true
+element_classic_default_language: pt-BR
+element_classic_hide_signup: true
+element_classic_hide_forgot_password: true
+element_classic_hide_login_language_selector: true
 element_classic_branding_logo_file: ""
 element_classic_branding_background_file: ""
 element_classic_custom_welcome_enabled: false
 element_classic_custom_welcome_file: element-welcome.html
-element_classic_custom_welcome_locale: pt-BR
+element_classic_custom_welcome_locale: "{{ element_classic_default_language }}"
 element_classic_custom_welcome_hide_create_account: true
 element_classic_custom_welcome_title: "{{ matrix_instance_name }}"
 element_classic_custom_welcome_subtitle: Mensageria segura para equipes de saude

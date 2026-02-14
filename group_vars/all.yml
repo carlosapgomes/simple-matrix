@@ -32,7 +32,9 @@ backup_retention_days: 14
 # matrix_web_assets_host_path: "{{ matrix_home }}/cinny/assets"
 # matrix_web_assets_sync_from_controller: true
 # matrix_web_assets_local_path: "{{ playbook_dir }}/assets/matrix-web"
-# element_classic_image: docker.io/vectorim/element-web:latest
+# element_classic_build_custom: true
+# element_classic_image_prebuilt: docker.io/vectorim/element-web:latest
+# element_classic_image_local: element-classic:custom
 # element_classic_upstream_port: 80
 # element_classic_config_container_path: /app/config.json
 # element_classic_config_json:
@@ -41,6 +43,10 @@ backup_retention_days: 14
 #       base_url: "https://{{ matrix_fqdn }}"
 #       server_name: "{{ matrix_fqdn }}"
 #   disable_custom_urls: true
+# element_classic_default_language: pt-BR
+# element_classic_hide_signup: true
+# element_classic_hide_forgot_password: true
+# element_classic_hide_login_language_selector: true
 # element_classic_branding_logo_file: logo.png
 # element_classic_branding_background_file: background.jpg
 # element_classic_custom_welcome_enabled: true

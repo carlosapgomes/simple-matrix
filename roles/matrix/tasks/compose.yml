@@ -67,6 +67,50 @@
     XDG_RUNTIME_DIR: "/run/user/{{ matrix_uid }}"
     HOME: "{{ matrix_home }}"
 
+- name: Check custom Element Classic image
+  ansible.builtin.command: docker image inspect {{ element_classic_image }}
+  register: element_classic_image_check
+  failed_when: false
+  changed_when: false
+  when: >-
+    element_classic_build_custom | bool and
+    (matrix_web_default_client_normalized == 'element_classic' or matrix_web_secondary_client_normalized == 'element_classic')
+  args:
+    chdir: "{{ matrix_home }}"
+  become: true
+  become_user: "{{ matrix_user }}"
+  environment:
+    DOCKER_HOST: "unix:///run/user/{{ matrix_uid }}/docker.sock"
+    XDG_RUNTIME_DIR: "/run/user/{{ matrix_uid }}"
+    HOME: "{{ matrix_home }}"
+
+- name: Build custom Element Classic image
+  ansible.builtin.command: >-
+    docker compose
+    -f {{ matrix_home }}/docker-compose.yml
+    -p {{ docker_compose_project }}
+    build element-classic
+  when: >-
+    element_classic_build_custom | bool and
+    (matrix_web_default_client_normalized == 'element_classic' or matrix_web_secondary_client_normalized == 'element_classic') and
+    (
+      element_classic_image_check.rc != 0 or
+      (element_classic_dockerfile_render is defined and element_classic_dockerfile_render is changed) or
+      (element_classic_custom_ui_render is defined and element_classic_custom_ui_render is changed)
+    )
+  register: element_classic_build_result
+  retries: 3
+  delay: 10
+  until: element_classic_build_result.rc == 0
+  args:
+    chdir: "{{ matrix_home }}"
+  become: true
+  become_user: "{{ matrix_user }}"
+  environment:
+    DOCKER_HOST: "unix:///run/user/{{ matrix_uid }}/docker.sock"
+    XDG_RUNTIME_DIR: "/run/user/{{ matrix_uid }}"
+    HOME: "{{ matrix_home }}"
+
 - name: Check backup image
   ansible.builtin.command: docker image inspect {{ backup_image_local }}
   register: backup_image_check

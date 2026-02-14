@@ -1,0 +1,7 @@
+FROM {{ element_classic_image_prebuilt }}
+
+USER root
+
+COPY custom-ui.js /app/custom-ui.js
+
+RUN sed -i 's#</head>#  <script defer src="custom-ui.js"></script>\n</head>#' /app/index.html

@@ -142,6 +142,22 @@
       - element_classic_config_json is mapping
     fail_msg: "element_classic_config_json must be a YAML object (mapping)."
 
+- name: Validate Element Classic language format
+  ansible.builtin.assert:
+    that:
+      - element_classic_default_language | trim | length > 0
+      - element_classic_default_language is match('^[A-Za-z]{2,3}(-[A-Za-z0-9]{2,8})*$')
+    fail_msg: >-
+      element_classic_default_language must be a valid locale code,
+      for example pt-BR.
+
+- name: Validate Element Classic custom image name when build mode is enabled
+  ansible.builtin.assert:
+    that:
+      - element_classic_image_local | trim | length > 0
+    fail_msg: "element_classic_image_local must be set when element_classic_build_custom=true."
+  when: element_classic_build_custom | bool
+
 - name: Validate Element Classic branding logo file name
   ansible.builtin.assert:
     that:

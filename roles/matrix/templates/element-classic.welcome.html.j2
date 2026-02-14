@@ -2,15 +2,17 @@
 {% set element_classic_login_url = element_classic_route_prefix ~ '#/login?lang=' ~ element_classic_custom_welcome_locale %}
 {% set element_classic_register_url = element_classic_route_prefix ~ '#/register' %}
 <style type="text/css">
-  .mx-welcome-wrap {
+  .hgrs-welcome-wrap {
     padding: 24px;
     box-sizing: border-box;
     font-family: "Helvetica Neue", Arial, sans-serif;
     color: #0f172a;
   }
 
-  .mx-welcome-card {
-    width: min(560px, 100%);
+  .hgrs-welcome-card {
+    width: 100%;
+    max-width: 560px;
+    box-sizing: border-box;
     background: rgba(255, 255, 255, 0.9);
     border-radius: 16px;
     box-shadow: 0 20px 60px rgba(15, 23, 42, 0.18);
@@ -19,7 +21,7 @@
     margin: 0 auto;
   }
 
-  .mx-welcome-logo {
+  .hgrs-welcome-logo {
     display: block;
     max-height: 56px;
     max-width: 260px;
@@ -27,23 +29,23 @@
     margin: 0 auto 20px;
   }
 
-  .mx-welcome-title {
+  .hgrs-welcome-title {
     margin: 0 0 10px;
     font-size: clamp(1.5rem, 3.4vw, 2.1rem);
     line-height: 1.2;
   }
 
-  .mx-welcome-subtitle {
+  .hgrs-welcome-subtitle {
     margin: 0;
     color: #475569;
     font-size: 1rem;
   }
 
-  .mx-welcome-actions {
+  .hgrs-welcome-actions {
     margin-top: 24px;
   }
 
-  .mx-welcome-btn {
+  .hgrs-welcome-btn {
     display: inline-block;
     border-radius: 10px;
     padding: 11px 18px;
@@ -52,28 +54,28 @@
     margin: 6px;
   }
 
-  .mx-welcome-btn-primary {
+  .hgrs-welcome-btn-primary {
     background: #0f766e;
     color: #ffffff;
   }
 
-  .mx-welcome-btn-secondary {
+  .hgrs-welcome-btn-secondary {
     background: #e2e8f0;
     color: #0f172a;
   }
 </style>
 
-<div class="mx-welcome-wrap" lang="{{ element_classic_custom_welcome_locale | replace('_', '-') }}">
-  <div class="mx-welcome-card">
+<div class="hgrs-welcome-wrap" lang="{{ element_classic_custom_welcome_locale | replace('_', '-') }}">
+  <div class="hgrs-welcome-card">
 {% if element_classic_branding_logo_file | trim | length > 0 %}
-    <img class="mx-welcome-logo" src="{{ matrix_web_assets_url_path }}/{{ element_classic_branding_logo_file }}" alt="Logo">
+    <img class="hgrs-welcome-logo" src="{{ matrix_web_assets_url_path }}/{{ element_classic_branding_logo_file }}" alt="Logo">
 {% endif %}
-    <h1 class="mx-welcome-title">{{ element_classic_custom_welcome_title }}</h1>
-    <p class="mx-welcome-subtitle">{{ element_classic_custom_welcome_subtitle }}</p>
-    <div class="mx-welcome-actions">
-      <a class="mx-welcome-btn mx-welcome-btn-primary" href="{{ element_classic_login_url }}" target="_parent">Entrar</a>
+    <h1 class="hgrs-welcome-title">{{ element_classic_custom_welcome_title }}</h1>
+    <p class="hgrs-welcome-subtitle">{{ element_classic_custom_welcome_subtitle }}</p>
+    <div class="hgrs-welcome-actions">
+      <a class="hgrs-welcome-btn hgrs-welcome-btn-primary" href="{{ element_classic_login_url }}" target="_parent">Entrar</a>
 {% if not (element_classic_custom_welcome_hide_create_account | bool) %}
-      <a class="mx-welcome-btn mx-welcome-btn-secondary" href="{{ element_classic_register_url }}" target="_parent">Criar conta</a>
+      <a class="hgrs-welcome-btn hgrs-welcome-btn-secondary" href="{{ element_classic_register_url }}" target="_parent">Criar conta</a>
 {% endif %}
     </div>
   </div>

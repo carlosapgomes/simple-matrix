@@ -254,6 +254,30 @@
     mode: "0644"
   when: matrix_web_default_client_normalized == 'element_classic' or matrix_web_secondary_client_normalized == 'element_classic'
 
+- name: Render Element Classic custom image Dockerfile
+  ansible.builtin.template:
+    src: element-classic.Dockerfile.j2
+    dest: "{{ matrix_home }}/element-classic/custom/Dockerfile"
+    owner: "{{ matrix_user }}"
+    group: "{{ matrix_user }}"
+    mode: "0644"
+  register: element_classic_dockerfile_render
+  when: >-
+    element_classic_build_custom | bool and
+    (matrix_web_default_client_normalized == 'element_classic' or matrix_web_secondary_client_normalized == 'element_classic')
+
+- name: Render Element Classic custom UI script
+  ansible.builtin.template:
+    src: element-classic.custom-ui.js.j2
+    dest: "{{ matrix_home }}/element-classic/custom/custom-ui.js"
+    owner: "{{ matrix_user }}"
+    group: "{{ matrix_user }}"
+    mode: "0644"
+  register: element_classic_custom_ui_render
+  when: >-
+    element_classic_build_custom | bool and
+    (matrix_web_default_client_normalized == 'element_classic' or matrix_web_secondary_client_normalized == 'element_classic')
+
 - name: Render docker-compose file
   ansible.builtin.template:
     src: docker-compose.yml.j2

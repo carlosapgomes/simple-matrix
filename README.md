@@ -113,10 +113,17 @@ Optional Cinny source-build mode:
 
 Optional Element Classic deployment:
 
-- `element_classic_image` (default: `docker.io/vectorim/element-web:latest`)
+- `element_classic_build_custom` (default: `false`; build a local customized Element image)
+- `element_classic_image_prebuilt` (default: `docker.io/vectorim/element-web:latest`)
+- `element_classic_image_local` (default: `element-classic:custom`; image tag used when custom build is enabled)
+- `element_classic_image` (derived; uses `element_classic_image_local` when custom build is enabled)
 - `element_classic_upstream_port` (default: `80`)
 - `element_classic_config_container_path` (default: `/app/config.json`)
 - `element_classic_config_json` (default sets `default_server_config` to `matrix_fqdn` and disables custom URLs)
+- `element_classic_default_language` (default: `pt-BR`; written to `setting_defaults.language` and localStorage by custom UI script)
+- `element_classic_hide_signup` (default: `true`; custom UI script hides signup actions on login flow)
+- `element_classic_hide_forgot_password` (default: `true`; custom UI script hides forgot-password actions on login flow)
+- `element_classic_hide_login_language_selector` (default: `true`; sets `disable_login_language_selector`)
 - `element_classic_branding_logo_file` (optional; filename under `matrix_web_assets_host_path`, injected as `branding.auth_header_logo_url`)
 - `element_classic_branding_background_file` (optional; filename under `matrix_web_assets_host_path`, injected as `branding.welcome_background_url`)
 - `element_classic_custom_welcome_enabled` (default: `false`; renders a managed custom welcome page and injects `embedded_pages.welcome_url`)
@@ -140,6 +147,13 @@ To use a managed welcome page (login-focused, with optional create-account hidin
 
 Note: the welcome page URL is configured through Element's `embedded_pages.welcome_url`
 key (not through `branding`).
+
+To build and run a customized Element image with UI patching (language + hide signup/forgot):
+
+- `element_classic_build_custom: true`
+- `element_classic_default_language: pt-BR`
+- `element_classic_hide_signup: true`
+- `element_classic_hide_forgot_password: true`
 
 Controller-driven asset sync (optional):
 

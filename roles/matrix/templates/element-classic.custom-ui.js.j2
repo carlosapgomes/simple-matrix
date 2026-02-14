@@ -1,0 +1,99 @@
+(function () {
+  "use strict";
+
+  var cfg = {
+    defaultLanguage: {{ element_classic_default_language | to_json }},
+    hideSignup: {{ element_classic_hide_signup | bool | to_json }},
+    hideForgotPassword: {{ element_classic_hide_forgot_password | bool | to_json }}
+  };
+
+  function setLocalSettingsLanguage() {
+    if (!cfg.defaultLanguage) return;
+
+    try {
+      var currentRaw = localStorage.getItem("mx_local_settings");
+      var current = currentRaw ? JSON.parse(currentRaw) : {};
+      if (typeof current !== "object" || current === null) current = {};
+      if (current.language !== cfg.defaultLanguage) {
+        current.language = cfg.defaultLanguage;
+        localStorage.setItem("mx_local_settings", JSON.stringify(current));
+      }
+    } catch (err) {
+      // Ignore storage/JSON failures and continue.
+    }
+  }
+
+  function ensureLoginHashLang() {
+    if (!cfg.defaultLanguage) return;
+
+    var hash = window.location.hash || "";
+    if (!hash.startsWith("#/login")) return;
+    if (hash.indexOf("lang=") !== -1) return;
+
+    var sep = hash.indexOf("?") === -1 ? "?" : "&";
+    var next = hash + sep + "lang=" + encodeURIComponent(cfg.defaultLanguage);
+    window.history.replaceState(null, "", window.location.pathname + window.location.search + next);
+  }
+
+  function lowerText(el) {
+    return ((el && el.textContent) || "").toLowerCase().trim();
+  }
+
+  function hideElement(el) {
+    if (!el) return;
+    var container = el.closest(".mx_AuthBody, .mx_AuthBody_login, .mx_Login_start, .mx_AuthPage, .mx_Field, .mx_FormButton, p, div") || el;
+    container.style.setProperty("display", "none", "important");
+    el.style.setProperty("display", "none", "important");
+    el.setAttribute("aria-hidden", "true");
+    el.setAttribute("tabindex", "-1");
+  }
+
+  function containsAny(value, needles) {
+    if (!value) return false;
+    for (var i = 0; i < needles.length; i += 1) {
+      if (value.indexOf(needles[i]) !== -1) return true;
+    }
+    return false;
+  }
+
+  function shouldHideSignup(el) {
+    if (!cfg.hideSignup) return false;
+    var href = (el.getAttribute("href") || "").toLowerCase();
+    var text = lowerText(el);
+    return containsAny(href, ["register", "signup", "sign-up"]) ||
+      containsAny(text, ["create account", "sign up", "signup", "criar conta", "cadastre", "registrar"]);
+  }
+
+  function shouldHideForgotPassword(el) {
+    if (!cfg.hideForgotPassword) return false;
+    var href = (el.getAttribute("href") || "").toLowerCase();
+    var text = lowerText(el);
+    return containsAny(href, ["forgot", "reset-password", "reset_password", "recover"]) ||
+      containsAny(text, ["forgot password", "forgotten password", "reset password", "esqueci", "redefinir senha", "recuperar senha"]);
+  }
+
+  function applyUiTweaks() {
+    setLocalSettingsLanguage();
+    ensureLoginHashLang();
+
+    var candidates = document.querySelectorAll("a, button, [role='button']");
+    for (var i = 0; i < candidates.length; i += 1) {
+      var el = candidates[i];
+      if (shouldHideSignup(el) || shouldHideForgotPassword(el)) {
+        hideElement(el);
+      }
+    }
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", applyUiTweaks);
+  } else {
+    applyUiTweaks();
+  }
+
+  window.addEventListener("hashchange", applyUiTweaks);
+  window.setInterval(applyUiTweaks, 2000);
+
+  var observer = new MutationObserver(applyUiTweaks);
+  observer.observe(document.documentElement, { childList: true, subtree: true });
+})();

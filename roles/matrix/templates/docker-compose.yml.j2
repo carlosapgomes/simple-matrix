@@ -67,6 +67,10 @@ services:
 {% if element_classic_enabled %}
   element-classic:
     image: {{ element_classic_image }}
+{% if element_classic_build_custom | bool %}
+    build:
+      context: ./element-classic/custom
+{% endif %}
     volumes:
       - "{{ matrix_home }}/element-classic/config.json:{{ element_classic_config_container_path }}:ro"
     restart: unless-stopped
