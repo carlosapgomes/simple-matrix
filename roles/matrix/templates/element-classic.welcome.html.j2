@@ -1,5 +1,6 @@
 {% set element_classic_route_prefix = '/' if matrix_web_default_client_normalized == 'element_classic' else (matrix_web_secondary_path_normalized ~ '/') %}
-{% set element_classic_login_url = element_classic_route_prefix ~ '#/login?lang=' ~ element_classic_custom_welcome_locale %}
+{% set element_classic_login_lang = element_classic_custom_welcome_locale | replace('-', '_') %}
+{% set element_classic_login_url = element_classic_route_prefix ~ '#/login?lang=' ~ element_classic_login_lang %}
 {% set element_classic_register_url = element_classic_route_prefix ~ '#/register' %}
 <style type="text/css">
   .hgrs-welcome-wrap {

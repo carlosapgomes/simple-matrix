@@ -9,7 +9,7 @@
 {% if element_classic_branding | length > 0 %}
 {% set element_classic_effective_config = element_classic_effective_config | combine({'branding': element_classic_branding}, recursive=True) %}
 {% endif %}
-{% set element_classic_setting_defaults = element_classic_effective_config.get('setting_defaults', {}) | combine({'language': element_classic_default_language}, recursive=True) %}
+{% set element_classic_setting_defaults = element_classic_effective_config.get('setting_defaults', {}) | combine({'language': (element_classic_default_language | replace('-', '_'))}, recursive=True) %}
 {% set element_classic_effective_config = element_classic_effective_config | combine({'setting_defaults': element_classic_setting_defaults}, recursive=True) %}
 {% if element_classic_hide_login_language_selector | bool %}
 {% set element_classic_effective_config = element_classic_effective_config | combine({'disable_login_language_selector': true}, recursive=True) %}

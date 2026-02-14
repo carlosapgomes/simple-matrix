@@ -7,31 +7,83 @@
     hideForgotPassword: {{ element_classic_hide_forgot_password | bool | to_json }}
   };
 
+  function localeCandidates(raw) {
+    var value = (raw || "").trim();
+    if (!value) return [];
+
+    var parts = value.split(/[-_]/);
+    var base = (parts[0] || "").toLowerCase();
+    var region = (parts[1] || "").toUpperCase();
+
+    var list = [];
+    function push(v) {
+      if (!v) return;
+      if (list.indexOf(v) === -1) list.push(v);
+    }
+
+    if (base && region) {
+      push(base + "_" + region);
+      push(base + "-" + region);
+      push(base + "-" + region.toLowerCase());
+      push(base + "_" + region.toLowerCase());
+    }
+    push(value);
+    push(value.replace(/-/g, "_"));
+    push(value.replace(/_/g, "-"));
+    if (base) push(base);
+    return list;
+  }
+
+  var languages = localeCandidates(cfg.defaultLanguage);
+  var preferredLanguage = languages.length ? languages[0] : "";
+
   function setLocalSettingsLanguage() {
-    if (!cfg.defaultLanguage) return;
+    if (!preferredLanguage) return false;
+
+    var changed = false;
 
     try {
       var currentRaw = localStorage.getItem("mx_local_settings");
       var current = currentRaw ? JSON.parse(currentRaw) : {};
       if (typeof current !== "object" || current === null) current = {};
-      if (current.language !== cfg.defaultLanguage) {
-        current.language = cfg.defaultLanguage;
+      if (current.language !== preferredLanguage) {
+        current.language = preferredLanguage;
         localStorage.setItem("mx_local_settings", JSON.stringify(current));
+        changed = true;
       }
     } catch (err) {
       // Ignore storage/JSON failures and continue.
     }
+
+    try {
+      if (localStorage.getItem("language") !== preferredLanguage) {
+        localStorage.setItem("language", preferredLanguage);
+        changed = true;
+      }
+      if (localStorage.getItem("mx_language") !== preferredLanguage) {
+        localStorage.setItem("mx_language", preferredLanguage);
+        changed = true;
+      }
+      if (localStorage.getItem("i18nextLng") !== preferredLanguage) {
+        localStorage.setItem("i18nextLng", preferredLanguage);
+        changed = true;
+      }
+    } catch (err2) {
+      // Ignore storage issues.
+    }
+
+    return changed;
   }
 
   function ensureLoginHashLang() {
-    if (!cfg.defaultLanguage) return;
+    if (!preferredLanguage) return;
 
     var hash = window.location.hash || "";
     if (!hash.startsWith("#/login")) return;
     if (hash.indexOf("lang=") !== -1) return;
 
     var sep = hash.indexOf("?") === -1 ? "?" : "&";
-    var next = hash + sep + "lang=" + encodeURIComponent(cfg.defaultLanguage);
+    var next = hash + sep + "lang=" + encodeURIComponent(preferredLanguage);
     window.history.replaceState(null, "", window.location.pathname + window.location.search + next);
   }
 
@@ -61,7 +113,7 @@
     var href = (el.getAttribute("href") || "").toLowerCase();
     var text = lowerText(el);
     return containsAny(href, ["register", "signup", "sign-up"]) ||
-      containsAny(text, ["create account", "sign up", "signup", "criar conta", "cadastre", "registrar"]);
+      containsAny(text, ["create account", "create an account", "sign up", "signup", "criar conta", "crie uma conta", "cadastre", "registrar"]);
   }
 
   function shouldHideForgotPassword(el) {
@@ -73,8 +125,21 @@
   }
 
   function applyUiTweaks() {
-    setLocalSettingsLanguage();
+    var languageChanged = setLocalSettingsLanguage();
     ensureLoginHashLang();
+
+    if (languageChanged) {
+      try {
+        var reloadKey = "hgrs_lang_applied_" + preferredLanguage;
+        if (sessionStorage.getItem(reloadKey) !== "1") {
+          sessionStorage.setItem(reloadKey, "1");
+          window.location.reload();
+          return;
+        }
+      } catch (e) {
+        // Ignore session storage limitations.
+      }
+    }
 
     var candidates = document.querySelectorAll("a, button, [role='button']");
     for (var i = 0; i < candidates.length; i += 1) {
