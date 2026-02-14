@@ -45,6 +45,41 @@
     XDG_RUNTIME_DIR: "/run/user/{{ matrix_uid }}"
     HOME: "{{ matrix_home }}"
 
+- name: Check Synapse Admin image
+  ansible.builtin.command: docker image inspect {{ synapse_admin_image }}
+  register: synapse_admin_image_check
+  failed_when: false
+  changed_when: false
+  when:
+    - synapse_admin_build_enabled | bool
+    - synapse_admin_image | trim | length > 0
+  args:
+    chdir: "{{ matrix_home }}"
+  become: true
+  become_user: "{{ matrix_user }}"
+  environment:
+    DOCKER_HOST: "unix:///run/user/{{ matrix_uid }}/docker.sock"
+    XDG_RUNTIME_DIR: "/run/user/{{ matrix_uid }}"
+    HOME: "{{ matrix_home }}"
+
+- name: Build Synapse Admin image if missing
+  ansible.builtin.command: >-
+    docker compose
+    -f {{ matrix_home }}/docker-compose.yml
+    -p {{ docker_compose_project }}
+    build synapse-admin
+  when:
+    - synapse_admin_build_enabled | bool
+    - synapse_admin_image | trim | length == 0 or synapse_admin_image_check.rc != 0
+  args:
+    chdir: "{{ matrix_home }}"
+  become: true
+  become_user: "{{ matrix_user }}"
+  environment:
+    DOCKER_HOST: "unix:///run/user/{{ matrix_uid }}/docker.sock"
+    XDG_RUNTIME_DIR: "/run/user/{{ matrix_uid }}"
+    HOME: "{{ matrix_home }}"
+
 - name: Start matrix stack
   ansible.builtin.command: >-
     docker compose
