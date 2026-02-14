@@ -95,8 +95,7 @@
     (matrix_web_default_client_normalized == 'element_classic' or matrix_web_secondary_client_normalized == 'element_classic') and
     (
       element_classic_image_check.rc != 0 or
-      (element_classic_dockerfile_render is defined and element_classic_dockerfile_render is changed) or
-      (element_classic_custom_ui_render is defined and element_classic_custom_ui_render is changed)
+      (element_classic_dockerfile_render is defined and element_classic_dockerfile_render is changed)
     )
   register: element_classic_build_result
   retries: 3

@@ -43,12 +43,6 @@ backup_retention_days: 14
 #       base_url: "https://{{ matrix_fqdn }}"
 #       server_name: "{{ matrix_fqdn }}"
 #   disable_custom_urls: true
-# element_classic_default_language: pt-BR
-# element_classic_hide_signup: true
-# element_classic_hide_forgot_password: true
-# element_classic_hide_login_language_selector: true
-# element_classic_branding_logo_file: logo.png
-# element_classic_branding_background_file: background.jpg
 
 # cinny_version: "v4.2.0"
 # synapse_enable_registration: false

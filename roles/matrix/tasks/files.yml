@@ -141,40 +141,6 @@
     mode: "0644"
   loop: "{{ matrix_web_assets_files.files }}"
 
-- name: Check Element Classic branding logo file
-  ansible.builtin.stat:
-    path: "{{ matrix_web_assets_host_path }}/{{ element_classic_branding_logo_file }}"
-  register: element_classic_branding_logo_stat
-  when: element_classic_branding_logo_file | trim | length > 0
-
-- name: Assert Element Classic branding logo file exists
-  ansible.builtin.assert:
-    that:
-      - element_classic_branding_logo_stat.stat.exists
-      - element_classic_branding_logo_stat.stat.isreg
-    fail_msg: >-
-      element_classic_branding_logo_file points to
-      {{ matrix_web_assets_host_path }}/{{ element_classic_branding_logo_file }},
-      but that file does not exist on the managed host.
-  when: element_classic_branding_logo_file | trim | length > 0
-
-- name: Check Element Classic branding background file
-  ansible.builtin.stat:
-    path: "{{ matrix_web_assets_host_path }}/{{ element_classic_branding_background_file }}"
-  register: element_classic_branding_background_stat
-  when: element_classic_branding_background_file | trim | length > 0
-
-- name: Assert Element Classic branding background file exists
-  ansible.builtin.assert:
-    that:
-      - element_classic_branding_background_stat.stat.exists
-      - element_classic_branding_background_stat.stat.isreg
-    fail_msg: >-
-      element_classic_branding_background_file points to
-      {{ matrix_web_assets_host_path }}/{{ element_classic_branding_background_file }},
-      but that file does not exist on the managed host.
-  when: element_classic_branding_background_file | trim | length > 0
-
 - name: Render environment file
   ansible.builtin.template:
     src: env.j2
@@ -253,18 +219,6 @@
     group: "{{ matrix_user }}"
     mode: "0644"
   register: element_classic_dockerfile_render
-  when: >-
-    element_classic_build_custom | bool and
-    (matrix_web_default_client_normalized == 'element_classic' or matrix_web_secondary_client_normalized == 'element_classic')
-
-- name: Render Element Classic custom UI script
-  ansible.builtin.template:
-    src: element-classic.custom-ui.js.j2
-    dest: "{{ matrix_home }}/element-classic/custom/custom-ui.js"
-    owner: "{{ matrix_user }}"
-    group: "{{ matrix_user }}"
-    mode: "0644"
-  register: element_classic_custom_ui_render
   when: >-
     element_classic_build_custom | bool and
     (matrix_web_default_client_normalized == 'element_classic' or matrix_web_secondary_client_normalized == 'element_classic')
