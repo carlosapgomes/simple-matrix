@@ -1,0 +1,11 @@
+{
+  "welcome_to_element": {
+    "pt-br": "Bem-vindo ao Chat Interno"
+  },
+  "powered_by_matrix_with_logo": {
+    "pt-br": "Mensagens internas seguras com $matrixLogo"
+  },
+  "action|sign_in": {
+    "pt-br": "Entrar"
+  }
+}
