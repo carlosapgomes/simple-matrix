@@ -91,39 +91,19 @@ Edit `group_vars/all.yml` and set required values:
 - `matrix_retention_days`
 - `backup_retention_days`
 
-Optional Cinny login UX:
+Optional web client asset settings:
 
-- `cinny_hide_register_prompt` (default: follows `synapse_enable_registration`; hides login-page register CTA when registration is disabled)
-
-Optional web client routing:
-
-- `matrix_web_default_client` (default: `cinny`, allowed: `cinny`, `element_classic`)
-- `matrix_web_secondary_client` (default: empty; optional second client: `cinny` or `element_classic`)
-- `matrix_web_secondary_path` (default: `/chat2`; required when secondary client is enabled)
 - `matrix_web_assets_url_path` (default: `/matrix-assets`; static assets URL prefix served by nginx)
-- `matrix_web_assets_host_path` (default: `/opt/matrix/cinny/assets`; source folder mounted read-only into nginx)
+- `matrix_web_assets_host_path` (default: `/opt/matrix/web-assets`; source folder mounted read-only into nginx)
 - `matrix_web_assets_sync_from_controller` (default: `true`; copy assets from control node if local folder exists)
 - `matrix_web_assets_local_path` (default: `{{ playbook_dir }}/assets/matrix-web`; control-node folder copied to `matrix_web_assets_host_path`)
 
-Optional Cinny source-build mode:
+Element Classic deployment:
 
-- `cinny_build_from_source` (default: `false`)
-- `cinny_image_prebuilt` (default: `ghcr.io/cinnyapp/cinny:latest`)
-- `cinny_image_local` (default: `cinny:local`)
-
-Optional Element Classic deployment:
-
-- `element_classic_build_custom` (default: `false`; build a local customized Element image)
-- `element_classic_image_prebuilt` (default: `docker.io/vectorim/element-web:latest`)
-- `element_classic_image_local` (default: `element-classic:custom`; image tag used when custom build is enabled)
-- `element_classic_image` (derived; uses `element_classic_image_local` when custom build is enabled)
+- `element_classic_image` (default: `docker.io/vectorim/element-web:latest`)
 - `element_classic_upstream_port` (default: `80`)
 - `element_classic_config_container_path` (default: `/app/config.json`)
 - `element_classic_config_json` (default sets `default_server_config` to `matrix_fqdn` and disables custom URLs)
-
-To build and run your own vanilla Element image:
-
-- `element_classic_build_custom: true`
 
 Controller-driven asset sync (optional):
 
@@ -202,8 +182,7 @@ Security best practice:
 - Rootless Docker + Docker Compose
 - Synapse + PostgreSQL
 - Synapse Admin UI under `/admin`
-- Primary Matrix web client under `/` (`cinny` by default)
-- Optional secondary Matrix web client under a configurable path (for example `/chat2`)
+- Matrix web client (Element Classic) under `/`
 - nginx reverse proxy published on host port `8080`
 - Cloudflare Tunnel systemd service
 - Host firewall via `ufw`

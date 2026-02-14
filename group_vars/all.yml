@@ -28,17 +28,12 @@ backup_retention_days: 14
 # synapse_admin_config_json:
 #   restrictBaseUrl: "https://{{ matrix_fqdn }}"
 
-# matrix_web_default_client: cinny
-# matrix_web_secondary_client: element_classic
-# matrix_web_secondary_path: /chat2
 # matrix_web_assets_url_path: /matrix-assets
-# matrix_web_assets_host_path: "{{ matrix_home }}/cinny/assets"
+# matrix_web_assets_host_path: "{{ matrix_home }}/web-assets"
 # matrix_web_assets_sync_from_controller: true
 # matrix_web_assets_local_path: "{{ playbook_dir }}/assets/matrix-web"
 
-# element_classic_build_custom: false
-# element_classic_image_prebuilt: docker.io/vectorim/element-web:latest
-# element_classic_image_local: element-classic:custom
+# element_classic_image: docker.io/vectorim/element-web:latest
 # element_classic_upstream_port: 80
 # element_classic_config_container_path: /app/config.json
 element_classic_config_json:
@@ -63,9 +58,7 @@ element_classic_config_json:
     auth_header_logo_url: "https://{{ matrix_fqdn }}{{ matrix_web_assets_url_path }}/logo.png"
     welcome_background_url: "https://{{ matrix_fqdn }}{{ matrix_web_assets_url_path }}/background.jpg"
 
-# cinny_version: "v4.2.0"
 # synapse_enable_registration: false
 # synapse_enable_registration_without_verification: false
-# cinny_hide_register_prompt: true
 # backup_time: "03:00"
 # backup_timezone: "UTC"

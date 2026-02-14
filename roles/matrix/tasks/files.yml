@@ -96,6 +96,26 @@
   become: false
   when: matrix_web_assets_sync_from_controller | bool
 
+- name: Check legacy web assets directory
+  ansible.builtin.stat:
+    path: "{{ matrix_web_assets_legacy_host_path }}"
+  register: matrix_web_assets_legacy_dir
+  when: matrix_web_assets_host_path != matrix_web_assets_legacy_host_path
+
+- name: Migrate legacy web assets into current assets directory
+  ansible.builtin.copy:
+    src: "{{ matrix_web_assets_legacy_host_path }}/"
+    dest: "{{ matrix_web_assets_host_path }}/"
+    owner: "{{ matrix_user }}"
+    group: "{{ matrix_user }}"
+    mode: "0644"
+    directory_mode: "0755"
+    remote_src: true
+  when:
+    - matrix_web_assets_host_path != matrix_web_assets_legacy_host_path
+    - matrix_web_assets_legacy_dir.stat.exists | default(false)
+    - matrix_web_assets_legacy_dir.stat.isdir | default(false)
+
 - name: Copy controller web assets to managed host
   ansible.builtin.copy:
     src: "{{ matrix_web_assets_local_path }}/"
@@ -140,6 +160,12 @@
     group: "{{ matrix_user }}"
     mode: "0644"
   loop: "{{ matrix_web_assets_files.files }}"
+
+- name: Remove legacy Cinny directory when not used as assets path
+  ansible.builtin.file:
+    path: "{{ matrix_home }}/cinny"
+    state: absent
+  when: matrix_web_assets_host_path != matrix_web_assets_legacy_host_path
 
 - name: Render environment file
   ansible.builtin.template:
@@ -193,15 +219,6 @@
     group: "{{ matrix_user }}"
     mode: "0644"
 
-- name: Render Cinny config
-  ansible.builtin.template:
-    src: cinny.config.json.j2
-    dest: "{{ matrix_home }}/cinny/config.json"
-    owner: "{{ matrix_user }}"
-    group: "{{ matrix_user }}"
-    mode: "0644"
-  when: matrix_web_default_client_normalized == 'cinny' or matrix_web_secondary_client_normalized == 'cinny'
-
 - name: Render Element Classic config
   ansible.builtin.template:
     src: element-classic.config.json.j2
@@ -209,19 +226,6 @@
     owner: "{{ matrix_user }}"
     group: "{{ matrix_user }}"
     mode: "0644"
-  when: matrix_web_default_client_normalized == 'element_classic' or matrix_web_secondary_client_normalized == 'element_classic'
-
-- name: Render Element Classic custom image Dockerfile
-  ansible.builtin.template:
-    src: element-classic.Dockerfile.j2
-    dest: "{{ matrix_home }}/element-classic/custom/Dockerfile"
-    owner: "{{ matrix_user }}"
-    group: "{{ matrix_user }}"
-    mode: "0644"
-  register: element_classic_dockerfile_render
-  when: >-
-    element_classic_build_custom | bool and
-    (matrix_web_default_client_normalized == 'element_classic' or matrix_web_secondary_client_normalized == 'element_classic')
 
 - name: Render docker-compose file
   ansible.builtin.template:

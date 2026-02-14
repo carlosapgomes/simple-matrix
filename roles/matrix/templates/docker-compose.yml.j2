@@ -1,5 +1,3 @@
-{% set cinny_enabled = matrix_web_default_client_normalized == 'cinny' or matrix_web_secondary_client_normalized == 'cinny' %}
-{% set element_classic_enabled = matrix_web_default_client_normalized == 'element_classic' or matrix_web_secondary_client_normalized == 'element_classic' %}
 services:
   postgres:
     image: {{ postgres_image }}
@@ -50,45 +48,20 @@ services:
     networks:
       - matrix_net
 
-{% if cinny_enabled %}
-  cinny:
-    image: {{ cinny_image }}
-{% if cinny_build_from_source | bool %}
-    build:
-      context: ./cinny/src
-{% endif %}
-    volumes:
-      - "{{ matrix_home }}/cinny/config.json:/usr/share/nginx/html/config.json:ro"
-    restart: unless-stopped
-    networks:
-      - matrix_net
-{% endif %}
-
-{% if element_classic_enabled %}
   element-classic:
     image: {{ element_classic_image }}
-{% if element_classic_build_custom | bool %}
-    build:
-      context: ./element-classic/custom
-{% endif %}
     volumes:
       - "{{ matrix_home }}/element-classic/config.json:{{ element_classic_config_container_path }}:ro"
     restart: unless-stopped
     networks:
       - matrix_net
-{% endif %}
 
   nginx:
     image: {{ nginx_image }}
     depends_on:
       - synapse
       - synapse-admin
-{% if cinny_enabled %}
-      - cinny
-{% endif %}
-{% if element_classic_enabled %}
       - element-classic
-{% endif %}
     ports:
       - "8080:80"
     volumes:

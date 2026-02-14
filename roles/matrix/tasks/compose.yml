@@ -1,16 +1,4 @@
 ---
-- name: Clone Cinny source
-  ansible.builtin.git:
-    repo: "{{ cinny_repo }}"
-    dest: "{{ cinny_build_dir }}"
-    version: "{{ cinny_version }}"
-    force: false
-  when: >-
-    cinny_build_from_source | bool and
-    (matrix_web_default_client_normalized == 'cinny' or matrix_web_secondary_client_normalized == 'cinny')
-  become: true
-  become_user: "{{ matrix_user }}"
-
 - name: Ensure Synapse signing key exists
   ansible.builtin.command: >-
     docker run --rm
@@ -20,89 +8,6 @@
     {{ synapse_image }} generate
   args:
     creates: "{{ matrix_data_dir }}/synapse/{{ matrix_fqdn }}.signing.key"
-  become: true
-  become_user: "{{ matrix_user }}"
-  environment:
-    DOCKER_HOST: "unix:///run/user/{{ matrix_uid }}/docker.sock"
-    XDG_RUNTIME_DIR: "/run/user/{{ matrix_uid }}"
-    HOME: "{{ matrix_home }}"
-
-- name: Build Cinny image
-  ansible.builtin.command: docker image inspect {{ cinny_image }}
-  register: cinny_image_check
-  failed_when: false
-  changed_when: false
-  when: >-
-    cinny_build_from_source | bool and
-    (matrix_web_default_client_normalized == 'cinny' or matrix_web_secondary_client_normalized == 'cinny')
-  args:
-    chdir: "{{ matrix_home }}"
-  become: true
-  become_user: "{{ matrix_user }}"
-  environment:
-    DOCKER_HOST: "unix:///run/user/{{ matrix_uid }}/docker.sock"
-    XDG_RUNTIME_DIR: "/run/user/{{ matrix_uid }}"
-    HOME: "{{ matrix_home }}"
-
-- name: Build Cinny image if missing
-  ansible.builtin.command: >-
-    docker compose
-    -f {{ matrix_home }}/docker-compose.yml
-    -p {{ docker_compose_project }}
-    build cinny
-  when: >-
-    cinny_build_from_source | bool and
-    (matrix_web_default_client_normalized == 'cinny' or matrix_web_secondary_client_normalized == 'cinny') and
-    cinny_image_check.rc != 0
-  register: cinny_build_result
-  retries: 3
-  delay: 10
-  until: cinny_build_result.rc == 0
-  args:
-    chdir: "{{ matrix_home }}"
-  become: true
-  become_user: "{{ matrix_user }}"
-  environment:
-    DOCKER_HOST: "unix:///run/user/{{ matrix_uid }}/docker.sock"
-    XDG_RUNTIME_DIR: "/run/user/{{ matrix_uid }}"
-    HOME: "{{ matrix_home }}"
-
-- name: Check custom Element Classic image
-  ansible.builtin.command: docker image inspect {{ element_classic_image }}
-  register: element_classic_image_check
-  failed_when: false
-  changed_when: false
-  when: >-
-    element_classic_build_custom | bool and
-    (matrix_web_default_client_normalized == 'element_classic' or matrix_web_secondary_client_normalized == 'element_classic')
-  args:
-    chdir: "{{ matrix_home }}"
-  become: true
-  become_user: "{{ matrix_user }}"
-  environment:
-    DOCKER_HOST: "unix:///run/user/{{ matrix_uid }}/docker.sock"
-    XDG_RUNTIME_DIR: "/run/user/{{ matrix_uid }}"
-    HOME: "{{ matrix_home }}"
-
-- name: Build custom Element Classic image
-  ansible.builtin.command: >-
-    docker compose
-    -f {{ matrix_home }}/docker-compose.yml
-    -p {{ docker_compose_project }}
-    build element-classic
-  when: >-
-    element_classic_build_custom | bool and
-    (matrix_web_default_client_normalized == 'element_classic' or matrix_web_secondary_client_normalized == 'element_classic') and
-    (
-      element_classic_image_check.rc != 0 or
-      (element_classic_dockerfile_render is defined and element_classic_dockerfile_render is changed)
-    )
-  register: element_classic_build_result
-  retries: 3
-  delay: 10
-  until: element_classic_build_result.rc == 0
-  args:
-    chdir: "{{ matrix_home }}"
   become: true
   become_user: "{{ matrix_user }}"
   environment:
@@ -145,7 +50,7 @@
     docker compose
     -f {{ matrix_home }}/docker-compose.yml
     -p {{ docker_compose_project }}
-    up -d
+    up -d --remove-orphans
   changed_when: false
   args:
     chdir: "{{ matrix_home }}"
@@ -222,23 +127,15 @@
       (rc={{ nginx_port_verified.rc }}, stdout='{{ nginx_port_verified.stdout | default('') | trim }}',
       stderr='{{ nginx_port_verified.stderr | default('') | trim }}').
 
-- name: Determine Element Classic health check path
-  ansible.builtin.set_fact:
-    element_classic_healthcheck_path: >-
-      {{ '/' if matrix_web_default_client_normalized == 'element_classic'
-      else (matrix_web_secondary_path_normalized ~ '/') }}
-  when: matrix_web_default_client_normalized == 'element_classic' or matrix_web_secondary_client_normalized == 'element_classic'
-
 - name: Wait for Element Classic to respond through nginx
   ansible.builtin.uri:
-    url: "http://127.0.0.1:8080{{ element_classic_healthcheck_path }}"
+    url: "http://127.0.0.1:8080/"
     method: GET
     status_code: 200
   register: element_classic_health
   retries: 20
   delay: 6
   until: element_classic_health.status == 200
-  when: matrix_web_default_client_normalized == 'element_classic' or matrix_web_secondary_client_normalized == 'element_classic'
 
 - name: Wait for Synapse to respond
   ansible.builtin.uri:

@@ -22,7 +22,7 @@ Your task:
    * Docker Compose deployment
    * Synapse configuration templating
    * nginx reverse proxy config
-   * Cinny static container
+   * Element Classic web container
    * PostgreSQL container
    * Synapse Admin container
    * cloudflared installation and service

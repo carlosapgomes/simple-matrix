@@ -79,51 +79,12 @@ http {
       add_header Cache-Control "public, max-age=3600";
     }
 
-{% if matrix_web_secondary_client_normalized | length > 0 %}
-    location = {{ matrix_web_secondary_path_normalized }} {
-      return 301 {{ matrix_web_secondary_path_normalized }}/;
-    }
-
-    location {{ matrix_web_secondary_path_normalized }}/ {
-{% if matrix_web_secondary_client_normalized == 'cinny' %}
-      proxy_pass http://cinny:80/;
-{% else %}
-      proxy_pass http://element-classic:{{ element_classic_upstream_port }}/;
-{% endif %}
-      proxy_set_header Host $host;
-      proxy_set_header X-Real-IP $remote_addr;
-      proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-      proxy_set_header X-Forwarded-Proto $scheme;
-      proxy_set_header X-Forwarded-Prefix {{ matrix_web_secondary_path_normalized }};
-{% if matrix_web_secondary_client_normalized == 'cinny' and cinny_hide_register_prompt | bool %}
-      # Cinny renders a register CTA even when the homeserver has registration disabled.
-      # Hide this prompt to avoid sending users to a non-working flow.
-      proxy_set_header Accept-Encoding "";
-      sub_filter_types text/html;
-      sub_filter_once on;
-      sub_filter '</head>' '<style>a[href*="/register"]{display:none!important;} p:has(a[href*="/register"]){display:none!important;}</style><script>(function(){function h(){document.querySelectorAll("a[href*=\\"/register\\"]").forEach(function(a){var c=a.closest("p,div");if(c&&/register/i.test(c.textContent||"")){c.style.display="none";}else{a.style.display="none";}});}h();new MutationObserver(h).observe(document.documentElement,{childList:true,subtree:true});})();</script></head>';
-{% endif %}
-    }
-{% endif %}
-
     location / {
-{% if matrix_web_default_client_normalized == 'cinny' %}
-      proxy_pass http://cinny:80;
-{% else %}
       proxy_pass http://element-classic:{{ element_classic_upstream_port }};
-{% endif %}
       proxy_set_header Host $host;
       proxy_set_header X-Real-IP $remote_addr;
       proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
       proxy_set_header X-Forwarded-Proto $scheme;
-{% if matrix_web_default_client_normalized == 'cinny' and cinny_hide_register_prompt | bool %}
-      # Cinny renders a register CTA even when the homeserver has registration disabled.
-      # Hide this prompt to avoid sending users to a non-working flow.
-      proxy_set_header Accept-Encoding "";
-      sub_filter_types text/html;
-      sub_filter_once on;
-      sub_filter '</head>' '<style>a[href*="/register"]{display:none!important;} p:has(a[href*="/register"]){display:none!important;}</style><script>(function(){function h(){document.querySelectorAll("a[href*=\\"/register\\"]").forEach(function(a){var c=a.closest("p,div");if(c&&/register/i.test(c.textContent||"")){c.style.display="none";}else{a.style.display="none";}});}h();new MutationObserver(h).observe(document.documentElement,{childList:true,subtree:true});})();</script></head>';
-{% endif %}
     }
   }
 }

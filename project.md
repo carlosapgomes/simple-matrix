@@ -31,7 +31,7 @@ localhost:8080 (nginx)
         ↓
  ├─ /_matrix  → synapse
  ├─ /admin    → synapse-admin
- └─ /         → cinny (web client)
+ └─ /         → element-web (web client)
 ```
 
 All containers run in an isolated Docker network.
@@ -80,7 +80,7 @@ Directory layout:
     .env
     homeserver.yaml
     nginx/
-    cinny/
+    element-classic/
     data/
         postgres/
         synapse/
@@ -99,7 +99,7 @@ Ownership: `matrix:matrix`
 1. Synapse
 2. PostgreSQL
 3. Synapse Admin
-4. Cinny (custom static build container)
+4. Element Classic (upstream container image)
 5. nginx
 6. cloudflared
 7. Backup container (cron-based)
@@ -156,12 +156,12 @@ Encryption defaults must not be auto-enabled for rooms.
 
 ---
 
-# 9️⃣ Cinny (Web Client)
+# 9️⃣ Element Classic (Web Client)
 
 Must:
 
 * Be self-hosted
-* Be built from source or prebuilt static
+* Use upstream container image
 * Configured to use `https://{{ matrix_fqdn }}`
 * Customizable:
 
@@ -188,7 +188,7 @@ Hosted at `/`.
 Routes:
 
 ```
-/               → cinny
+/               → element-web
 /_matrix        → synapse
 /admin          → synapse-admin
 ```
