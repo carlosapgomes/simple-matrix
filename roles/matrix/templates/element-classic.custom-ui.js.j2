@@ -125,21 +125,8 @@
   }
 
   function applyUiTweaks() {
-    var languageChanged = setLocalSettingsLanguage();
+    setLocalSettingsLanguage();
     ensureLoginHashLang();
-
-    if (languageChanged) {
-      try {
-        var reloadKey = "hgrs_lang_applied_" + preferredLanguage;
-        if (sessionStorage.getItem(reloadKey) !== "1") {
-          sessionStorage.setItem(reloadKey, "1");
-          window.location.reload();
-          return;
-        }
-      } catch (e) {
-        // Ignore session storage limitations.
-      }
-    }
 
     var candidates = document.querySelectorAll("a, button, [role='button']");
     for (var i = 0; i < candidates.length; i += 1) {

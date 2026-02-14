@@ -87,12 +87,6 @@ element_classic_hide_forgot_password: true
 element_classic_hide_login_language_selector: true
 element_classic_branding_logo_file: ""
 element_classic_branding_background_file: ""
-element_classic_custom_welcome_enabled: false
-element_classic_custom_welcome_file: element-welcome.html
-element_classic_custom_welcome_locale: "{{ element_classic_default_language }}"
-element_classic_custom_welcome_hide_create_account: true
-element_classic_custom_welcome_title: "{{ matrix_instance_name }}"
-element_classic_custom_welcome_subtitle: Mensageria segura para equipes de saude
 
 postgres_db: synapse
 postgres_user: synapse

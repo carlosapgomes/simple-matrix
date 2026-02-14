@@ -176,27 +176,6 @@
       element_classic_branding_background_file must be empty or a relative filename/path
       within matrix_web_assets_host_path (no leading '/' and no '..').
 
-- name: Validate Element Classic custom welcome file name
-  ansible.builtin.assert:
-    that:
-      - element_classic_custom_welcome_file | trim | length > 0
-      - element_classic_custom_welcome_file is match('^[^/].*')
-      - (".." not in element_classic_custom_welcome_file)
-    fail_msg: >-
-      element_classic_custom_welcome_file must be a relative filename/path
-      within matrix_web_assets_host_path (no leading '/' and no '..').
-  when: element_classic_custom_welcome_enabled | bool
-
-- name: Validate Element Classic custom welcome locale format
-  ansible.builtin.assert:
-    that:
-      - element_classic_custom_welcome_locale | trim | length > 0
-      - element_classic_custom_welcome_locale is match('^[A-Za-z]{2,3}(-[A-Za-z0-9]{2,8})*$')
-    fail_msg: >-
-      element_classic_custom_welcome_locale must be a valid locale code,
-      for example pt-BR.
-  when: element_classic_custom_welcome_enabled | bool
-
 - name: Validate Synapse Admin well-known homeserver format
   ansible.builtin.assert:
     that:

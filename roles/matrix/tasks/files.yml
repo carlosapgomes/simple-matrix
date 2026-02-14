@@ -141,15 +141,6 @@
     mode: "0644"
   loop: "{{ matrix_web_assets_files.files }}"
 
-- name: Render Element Classic custom welcome page
-  ansible.builtin.template:
-    src: element-classic.welcome.html.j2
-    dest: "{{ matrix_web_assets_host_path }}/{{ element_classic_custom_welcome_file }}"
-    owner: "{{ matrix_user }}"
-    group: "{{ matrix_user }}"
-    mode: "0644"
-  when: element_classic_custom_welcome_enabled | bool
-
 - name: Check Element Classic branding logo file
   ansible.builtin.stat:
     path: "{{ matrix_web_assets_host_path }}/{{ element_classic_branding_logo_file }}"
