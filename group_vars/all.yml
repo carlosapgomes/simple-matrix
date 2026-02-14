@@ -27,6 +27,10 @@ backup_retention_days: 14
 # synapse_admin_config_container_path: /var/public/config.json
 # synapse_admin_config_json:
 #   restrictBaseUrl: "https://{{ matrix_fqdn }}"
+# synapse_admin_build_enabled: true
+# synapse_admin_build_context: "https://github.com/carlosapgomes/synapse-admin.git"
+# synapse_admin_build_dockerfile: Dockerfile
+# synapse_admin_image: matrix-synapse-admin:local
 
 # matrix_web_assets_url_path: /matrix-assets
 # matrix_web_assets_host_path: "{{ matrix_home }}/web-assets"

@@ -150,6 +150,7 @@ Encryption defaults must not be auto-enabled for rooms.
 # 8️⃣ Synapse Admin
 
 * Accessible via `/admin`
+* Built from `https://github.com/carlosapgomes/synapse-admin.git`
 * Behind nginx reverse proxy
 * No direct exposure
 * Authenticated via Matrix login

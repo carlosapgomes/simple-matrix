@@ -38,7 +38,14 @@ services:
       - matrix_net
 
   synapse-admin:
+{% if synapse_admin_build_enabled | bool %}
+    build:
+      context: "{{ synapse_admin_build_context }}"
+      dockerfile: "{{ synapse_admin_build_dockerfile }}"
+{% endif %}
+{% if synapse_admin_image | trim | length > 0 %}
     image: {{ synapse_admin_image }}
+{% endif %}
     environment:
       REACT_APP_SERVER: "https://{{ matrix_fqdn }}"
       REACT_APP_SERVER_NAME: "{{ matrix_instance_name }}"

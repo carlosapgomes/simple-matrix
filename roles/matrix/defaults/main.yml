@@ -37,7 +37,10 @@ synapse_image: docker.io/matrixdotorg/synapse:latest
 synapse_container_user: "{{ synapse_container_uid }}:{{ synapse_container_gid }}"
 postgres_image: docker.io/postgres:16
 nginx_image: docker.io/nginx:stable
-synapse_admin_image: docker.io/etkecc/synapse-admin:latest
+synapse_admin_build_enabled: true
+synapse_admin_build_context: https://github.com/carlosapgomes/synapse-admin.git
+synapse_admin_build_dockerfile: Dockerfile
+synapse_admin_image: matrix-synapse-admin:local
 synapse_admin_upstream_port: 8080
 synapse_admin_restrict_baseurl: "https://{{ matrix_fqdn }}"
 synapse_admin_well_known_homeserver: "https://{{ matrix_fqdn }}"

@@ -71,6 +71,17 @@
       - synapse_admin_upstream_port | int < 65536
     fail_msg: "synapse_admin_upstream_port must be between 1 and 65535."
 
+- name: Validate Synapse Admin build settings
+  ansible.builtin.assert:
+    that:
+      - (synapse_admin_build_enabled | bool) or (synapse_admin_image | trim | length > 0)
+      - not (synapse_admin_build_enabled | bool) or (synapse_admin_build_context | trim | length > 0)
+      - not (synapse_admin_build_enabled | bool) or (synapse_admin_build_dockerfile | trim | length > 0)
+    fail_msg: >-
+      Synapse Admin config must include either a non-empty synapse_admin_image
+      or a valid build configuration (synapse_admin_build_context and
+      synapse_admin_build_dockerfile) when synapse_admin_build_enabled=true.
+
 - name: Validate Element Classic upstream port
   ansible.builtin.assert:
     that:
