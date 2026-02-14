@@ -120,7 +120,7 @@ Optional Docker rootless tuning:
 Optional Synapse Admin tuning:
 
 - `synapse_admin_build_enabled` (default: `true`; build Synapse Admin from source during `docker compose up`)
-- `synapse_admin_build_context` (default: `https://github.com/carlosapgomes/synapse-admin.git`)
+- `synapse_admin_build_context` (default: `https://github.com/carlosapgomes/etkecc-synapse-admin.git`)
 - `synapse_admin_build_dockerfile` (default: `Dockerfile`)
 - `synapse_admin_image` (default: `matrix-synapse-admin:local`; tag to assign to the built image)
 - `synapse_admin_upstream_port` (default: `8080`)
@@ -185,7 +185,7 @@ Security best practice:
 - Dedicated `matrix` system user
 - Rootless Docker + Docker Compose
 - Synapse + PostgreSQL
-- Synapse Admin UI under `/admin` (built from `https://github.com/carlosapgomes/synapse-admin.git` by default)
+- Synapse Admin UI under `/admin` (built from `https://github.com/carlosapgomes/etkecc-synapse-admin.git` by default)
 - Matrix web client (Element Classic) under `/`
 - nginx reverse proxy published on host port `8080`
 - Cloudflare Tunnel systemd service

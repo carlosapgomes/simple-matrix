@@ -27,8 +27,11 @@ backup_retention_days: 14
 # synapse_admin_config_container_path: /var/public/config.json
 # synapse_admin_config_json:
 #   restrictBaseUrl: "https://{{ matrix_fqdn }}"
+#   loginBackgroundUrl: "https://{{ matrix_fqdn  }}{{ matrix_web_assets_url_path  }}/background.jpg"
+#   loginWelcomeText: "Welcome to %{name}"
+
 # synapse_admin_build_enabled: true
-# synapse_admin_build_context: "https://github.com/carlosapgomes/synapse-admin.git"
+# synapse_admin_build_context: "https://github.com/carlosapgomes/etkecc-synapse-admin.git"
 # synapse_admin_build_dockerfile: Dockerfile
 # synapse_admin_image: matrix-synapse-admin:local
 
