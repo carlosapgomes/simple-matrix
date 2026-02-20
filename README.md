@@ -1,37 +1,39 @@
-# Hospital Internal Matrix Deployment (Ansible)
+🌐 **Português (Brasil)** | [English](README.en.md)
 
-This project deploys a single-node, non-federated Matrix stack for internal hospital use on Ubuntu 24.04. It uses rootless Docker, Cloudflare Tunnel, and nginx exposure on host port `8080` protected by host firewall policy.
+# Implantação Interna de Matrix em Hospital (Ansible)
 
-## Prerequisites
+Este projeto implanta uma stack Matrix single-node, não-federada, para uso interno em hospitais no Ubuntu 24.04. Utiliza Docker rootless, Cloudflare Tunnel e exposição via nginx na porta `8080` protegida por política de firewall do host.
 
-1. Ansible installed on your control machine.
-2. Target host is Ubuntu 24.04 LTS with SSH access.
-3. Cloudflare Tunnel already created in the Cloudflare dashboard.
-4. Install required Ansible collection:
+## Pré-requisitos
+
+1. Ansible instalado na sua máquina de controle.
+2. Host de destino é Ubuntu 24.04 LTS com acesso SSH.
+3. Cloudflare Tunnel já criado no dashboard da Cloudflare.
+4. Instale a coleção Ansible necessária:
 
 ```bash
 ansible-galaxy collection install community.general
 ```
 
-## Deploy
+## Implantação
 
-Terminology:
+Terminologia:
 
-- Control node: the machine where you run Ansible.
-- Managed node: the target server where Matrix will be installed.
+- Nó de controle: a máquina onde você executa o Ansible.
+- Nó gerenciado: o servidor de destino onde o Matrix será instalado.
 
-Steps (common workflow):
+Passos (fluxo comum):
 
-1. On the control node, clone this repository:
+1. No nó de controle, clone este repositório:
 
 ```bash
 git clone https://github.com/carlosapgomes/simple-matrix.git
 cd simple-matrix
 ```
 
-2. Update `inventory.yml` to point to your managed node (or add its hostname/IP).
+2. Atualize o `inventory.yml` para apontar para seu nó gerenciado (ou adicione seu hostname/IP).
 
-Example `inventory.yml`:
+Exemplo de `inventory.yml`:
 
 ```yaml
 all:
@@ -41,46 +43,46 @@ all:
       ansible_user: ubuntu
 ```
 
-3. Fill out `group_vars/all.yml` with real values (use Vault if desired).
+3. Preencha o `group_vars/all.yml` com valores reais (use Vault se desejar).
 
-4. Run the playbook from the control node.
+4. Execute o playbook do nó de controle.
 
-Sudo user (recommended):
+Usuário sudo (recomendado):
 
 ```bash
 ansible-playbook -i inventory.yml playbook.yml -u ubuntu -K
 ```
 
-The `-K` flag prompts for the sudo password on the managed node.
+A flag `-K` solicita a senha sudo no nó gerenciado.
 
-If you authenticate with SSH password (no SSH keys), use:
+Se você autentica com senha SSH (sem chaves SSH), use:
 
 ```bash
 ansible-playbook -i inventory.yml playbook.yml -u ubuntu -k -K
 ```
 
-The `-k` flag prompts for the SSH login password.
+A flag `-k` solicita a senha de login SSH.
 
-Root account:
+Conta root:
 
 ```bash
 ansible-playbook -i inventory.yml playbook.yml -u root
 ```
 
-If you encrypted `group_vars/all.yml`, add `--ask-vault-pass`:
+Se você criptografou o `group_vars/all.yml`, adicione `--ask-vault-pass`:
 
 ```bash
 ansible-playbook -i inventory.yml playbook.yml -u ubuntu -K --ask-vault-pass
 ```
 
-Notes:
+Notas:
 
-- `-K` prompts for the sudo password. If your sudo user has passwordless sudo, you can omit it.
-- Replace `ubuntu` with your actual SSH user.
+- `-K` solicita a senha sudo. Se seu usuário sudo tem sudo sem senha, você pode omiti-la.
+- Substitua `ubuntu` pelo seu usuário SSH real.
 
-## Configure Inventory Variables
+## Configurar Variáveis de Inventário
 
-Edit `group_vars/all.yml` and set required values:
+Edite o `group_vars/all.yml` e defina os valores obrigatórios:
 
 - `matrix_fqdn`
 - `matrix_instance_name`
@@ -91,149 +93,149 @@ Edit `group_vars/all.yml` and set required values:
 - `matrix_retention_days`
 - `backup_retention_days`
 
-Optional web client asset settings:
+Configurações opcionais de assets do cliente web:
 
-- `matrix_web_assets_url_path` (default: `/matrix-assets`; static assets URL prefix served by nginx)
-- `matrix_web_assets_host_path` (default: `/opt/matrix/web-assets`; source folder mounted read-only into nginx)
-- `matrix_web_assets_sync_from_controller` (default: `true`; copy assets from control node if local folder exists)
-- `matrix_web_assets_local_path` (default: `{{ playbook_dir }}/assets/matrix-web`; control-node folder copied to `matrix_web_assets_host_path`)
+- `matrix_web_assets_url_path` (padrão: `/matrix-assets`; prefixo URL de assets estáticos servidos pelo nginx)
+- `matrix_web_assets_host_path` (padrão: `/opt/matrix/web-assets`; pasta de origem montada como read-only no nginx)
+- `matrix_web_assets_sync_from_controller` (padrão: `true`; copia assets do nó de controle se a pasta local existir)
+- `matrix_web_assets_local_path` (padrão: `{{ playbook_dir }}/assets/matrix-web`; pasta do nó de controle copiada para `matrix_web_assets_host_path`)
 
-Element Classic deployment:
+Implantação do Element Classic:
 
-- `element_classic_image` (default: `docker.io/vectorim/element-web:latest`)
-- `element_classic_upstream_port` (default: `80`)
-- `element_classic_config_container_path` (default: `/app/config.json`)
-- `element_classic_config_json` (default sets `default_server_config` to `matrix_fqdn` and disables custom URLs)
+- `element_classic_image` (padrão: `docker.io/vectorim/element-web:latest`)
+- `element_classic_upstream_port` (padrão: `80`)
+- `element_classic_config_container_path` (padrão: `/app/config.json`)
+- `element_classic_config_json` (padrão define `default_server_config` para `matrix_fqdn` e desabilita URLs customizadas)
 
-Controller-driven asset sync (optional):
+Sincronização de assets controlada pelo controlador (opcional):
 
-- Put files on the control node under `assets/matrix-web/` in this repository (or override `matrix_web_assets_local_path`).
-- On playbook run, if that local folder exists, its contents are copied to `matrix_web_assets_host_path` on the managed host.
+- Coloque arquivos no nó de controle em `assets/matrix-web/` neste repositório (ou sobrescreva `matrix_web_assets_local_path`).
+- Na execução do playbook, se essa pasta local existir, seu conteúdo é copiado para `matrix_web_assets_host_path` no host gerenciado.
 
-Optional Docker rootless tuning:
+Ajustes opcionais do Docker rootless:
 
-- `docker_packages_state` (default: `latest`)
-- `docker_min_server_version` (default: `28.0.1`)
-- `docker_rootlesskit_port_driver` (default: `builtin`)
-- `matrix_network_internal` (default: `false`)
+- `docker_packages_state` (padrão: `latest`)
+- `docker_min_server_version` (padrão: `28.0.1`)
+- `docker_rootlesskit_port_driver` (padrão: `builtin`)
+- `matrix_network_internal` (padrão: `false`)
 
-Optional Synapse Admin tuning:
+Ajustes opcionais do Synapse Admin:
 
-- `synapse_admin_build_enabled` (default: `true`; build Synapse Admin from source during `docker compose up`)
-- `synapse_admin_build_context` (default: `https://github.com/carlosapgomes/etkecc-synapse-admin.git`)
-- `synapse_admin_build_dockerfile` (default: `Dockerfile`)
-- `synapse_admin_image` (default: `matrix-synapse-admin:local`; tag to assign to the built image)
-- `synapse_admin_upstream_port` (default: `8080`)
-- `synapse_admin_restrict_baseurl` (default: `https://{{ matrix_fqdn }}`; published via `/.well-known/matrix/client` as `cc.etke.synapse-admin.restrictBaseUrl`)
-- `synapse_admin_well_known_homeserver` (default: `https://{{ matrix_fqdn }}`; published via `/.well-known/matrix/client` as `io.famedly.login.homeserver`)
-- `synapse_admin_config_container_path` (default: `/var/public/config.json`)
-- `synapse_admin_config_json` (default sets `restrictBaseUrl`; rendered to `/opt/matrix/synapse-admin/config.json` and mounted into container)
+- `synapse_admin_build_enabled` (padrão: `true`; compila Synapse Admin do código-fonte durante `docker compose up`)
+- `synapse_admin_build_context` (padrão: `https://github.com/carlosapgomes/etkecc-synapse-admin.git`)
+- `synapse_admin_build_dockerfile` (padrão: `Dockerfile`)
+- `synapse_admin_image` (padrão: `matrix-synapse-admin:local`; tag a ser atribuída à imagem compilada)
+- `synapse_admin_upstream_port` (padrão: `8080`)
+- `synapse_admin_restrict_baseurl` (padrão: `https://{{ matrix_fqdn }}`; publicado via `/.well-known/matrix/client` como `cc.etke.synapse-admin.restrictBaseUrl`)
+- `synapse_admin_well_known_homeserver` (padrão: `https://{{ matrix_fqdn }}`; publicado via `/.well-known/matrix/client` como `io.famedly.login.homeserver`)
+- `synapse_admin_config_container_path` (padrão: `/var/public/config.json`)
+- `synapse_admin_config_json` (padrão define `restrictBaseUrl`; renderizado para `/opt/matrix/synapse-admin/config.json` e montado no container)
 
-Optional registration policy:
+Política de registro opcional:
 
-- `synapse_enable_registration` (default: `false`)
-- `synapse_enable_registration_without_verification` (default: `false`)
+- `synapse_enable_registration` (padrão: `false`)
+- `synapse_enable_registration_without_verification` (padrão: `false`)
 
-Optional reset script deployment:
+Implantação opcional de script de reset:
 
-- `matrix_reset_script_enabled` (default: `true`)
-- `matrix_reset_script_path` (default: `/opt/matrix/reset-matrix.sh`)
-- `matrix_reset_remove_backups` (default: `true`)
+- `matrix_reset_script_enabled` (padrão: `true`)
+- `matrix_reset_script_path` (padrão: `/opt/matrix/reset-matrix.sh`)
+- `matrix_reset_remove_backups` (padrão: `true`)
 
-Security best practice: store secrets in Ansible Vault rather than plaintext.
+Melhor prática de segurança: armazene secrets no Ansible Vault ao invés de texto plano.
 
-## Using Ansible Vault (Recommended)
+## Usando o Ansible Vault (Recomendado)
 
-This project includes long‑lived secrets (admin password, DB password, tunnel token). Even for a single-use deployment, it is safer to store them encrypted.
+Este projeto inclui secrets de longa duração (senha de admin, senha do BD, token do tunnel). Mesmo para um deploy de uso único, é mais seguro armazená-los criptografados.
 
-Encrypt your inventory variables:
+Criptografe suas variáveis de inventário:
 
 ```bash
 ansible-vault encrypt group_vars/all.yml
 ```
 
-Run the playbook:
+Execute o playbook:
 
 ```bash
 ansible-playbook -i inventory.yml playbook.yml --ask-vault-pass
 ```
 
-## Cloudflare Tunnel Setup (Token)
+## Configuração do Cloudflare Tunnel (Token)
 
-This project expects a pre-created Cloudflare Tunnel and uses the tunnel token only.
-It does not create or manage Cloudflare resources automatically.
+Este projeto espera um Cloudflare Tunnel pré-criado e usa apenas o token do tunnel.
+Ele não cria ou gerencia recursos da Cloudflare automaticamente.
 
-Steps to get the token:
+Passos para obter o token:
 
-1. Log in to the Cloudflare dashboard.
-2. Go to `Zero Trust` → `Access` → `Tunnels`.
-3. Create a new tunnel (type: Cloudflared).
-4. In the tunnel details, copy the token for your tunnel.
-5. Set `cloudflare_tunnel_token` in `group_vars/all.yml` (preferably via Ansible Vault).
+1. Faça login no dashboard da Cloudflare.
+2. Vá em `Zero Trust` → `Access` → `Tunnels`.
+3. Crie um novo tunnel (tipo: Cloudflared).
+4. Nos detalhes do tunnel, copie o token do seu tunnel.
+5. Defina `cloudflare_tunnel_token` no `group_vars/all.yml` (preferencialmente via Ansible Vault).
 
-Routing requirement:
+Requisito de roteamento:
 
-- Public hostname `https://<matrix_fqdn>` should point to `http://localhost:8080` via the tunnel.
+- O hostname público `https://<matrix_fqdn>` deve apontar para `http://localhost:8080` via tunnel.
 
-Security best practice:
+Melhor prática de segurança:
 
-- Treat the tunnel token as a secret. Rotate it if leaked.
+- Trate o token do tunnel como um secret. Rotacione-o se vazado.
 
 
-## What Gets Deployed
+## O Que é Implantado
 
-- Dedicated `matrix` system user
-- Rootless Docker + Docker Compose
+- Usuário de sistema dedicado `matrix`
+- Docker rootless + Docker Compose
 - Synapse + PostgreSQL
-- Synapse Admin UI under `/admin` (built from `https://github.com/carlosapgomes/etkecc-synapse-admin.git` by default)
-- Matrix web client (Element Classic) under `/`
-- nginx reverse proxy published on host port `8080`
-- Cloudflare Tunnel systemd service
-- Host firewall via `ufw`
-- Backup cron container (DB + media)
- - Automatic initial admin user creation (idempotent)
+- Synapse Admin UI em `/admin` (compilado de `https://github.com/carlosapgomes/etkecc-synapse-admin.git` por padrão)
+- Cliente web Matrix (Element Classic) em `/`
+- Proxy reverso nginx publicado na porta `8080` do host
+- Serviço systemd do Cloudflare Tunnel
+- Firewall do host via `ufw`
+- Container cron de backup (DB + mídia)
+ - Criação automática inicial de usuário admin (idempotente)
 
-## Operational Notes
+## Notas Operacionais
 
-- All services run under `/opt/matrix` and are owned by the `matrix` user.
-- Only nginx is published on host port `8080`; host firewall policy keeps external access blocked.
-- Rootless Docker daemon listens on a Unix socket (`/run/user/<uid>/docker.sock`), not a TCP port.
-- Cloudflare handles TLS; nginx runs without SSL locally.
-- Cloudflared runs as a systemd service and forwards `https://chat.hospital.example` to `http://localhost:8080`.
-- Backups are stored under `/opt/matrix/backups`.
- - Rootless Docker runs as a systemd user service for `matrix`.
+- Todos os serviços rodam em `/opt/matrix` e são de propriedade do usuário `matrix`.
+- Apenas o nginx é publicado na porta `8080` do host; a política de firewall do host bloqueia acesso externo.
+- O daemon Docker rootless escuta em um socket Unix (`/run/user/<uid>/docker.sock`), não em porta TCP.
+- A Cloudflare gerencia TLS; o nginx roda sem SSL localmente.
+- O Cloudflared roda como um serviço systemd e encaminha `https://chat.hospital.example` para `http://localhost:8080`.
+- Backups são armazenados em `/opt/matrix/backups`.
+ - O Docker rootless roda como um serviço de usuário systemd para `matrix`.
 
-## Resetting a Dev/Test Deployment
+## Resetar Implantação de Dev/Teste
 
-The role deploys a reset helper script on the managed node (default path: `/opt/matrix/reset-matrix.sh`).
+A role implanta um script helper de reset no nó gerenciado (caminho padrão: `/opt/matrix/reset-matrix.sh`).
 
-Run on the managed node as root (or via sudo):
+Execute no nó gerenciado como root (ou via sudo):
 
 ```bash
 sudo /opt/matrix/reset-matrix.sh
 ```
 
-This script will:
+Este script irá:
 
-- Stop the stack (`docker compose down`) if compose file exists
-- Remove `/opt/matrix/data/postgres`
-- Remove `/opt/matrix/data/synapse`
-- Remove `/opt/matrix/data/media_store`
-- Remove `/opt/matrix/.secrets`
-- Optionally remove `/opt/matrix/backups` when `matrix_reset_remove_backups=true`
+- Parar a stack (`docker compose down`) se o arquivo compose existir
+- Remover `/opt/matrix/data/postgres`
+- Remover `/opt/matrix/data/synapse`
+- Remover `/opt/matrix/data/media_store`
+- Remover `/opt/matrix/.secrets`
+- Remover opcionalmente `/opt/matrix/backups` quando `matrix_reset_remove_backups=true`
 
-After running it, execute the Ansible playbook again from the control node to provision a fresh instance.
+Após executá-lo, execute o playbook Ansible novamente do nó de controle para provisionar uma instância limpa.
 
-## Security Best Practices
+## Boas Práticas de Segurança
 
-- Keep `matrix_admin_password` and `postgres_password` in Vault.
-- Do not expose ports other than localhost `8080`.
-- Restrict SSH access and verify firewall rules before enabling ufw.
-- Rotate Cloudflare tunnel tokens if leaked.
+- Mantenha `matrix_admin_password` e `postgres_password` no Vault.
+- Não exponha portas além do localhost `8080`.
+- Restrinja acesso SSH e verifique as regras de firewall antes de habilitar o ufw.
+- Rotacione tokens do Cloudflare tunnel se vazados.
 
-## Troubleshooting
+## Solução de Problemas
 
-- Check systemd status: `systemctl status cloudflared-matrix`
-- Check rootless Docker: `sudo -u matrix systemctl --user status docker`
-- Check containers: `sudo -u matrix docker compose -f /opt/matrix/docker-compose.yml ps`
-- Check nginx published port: `sudo -u matrix XDG_RUNTIME_DIR=/run/user/$(id -u matrix) DOCKER_HOST=unix:///run/user/$(id -u matrix)/docker.sock docker compose -f /opt/matrix/docker-compose.yml -p matrix port nginx 80`
+- Verifique status do systemd: `systemctl status cloudflared-matrix`
+- Verifique Docker rootless: `sudo -u matrix systemctl --user status docker`
+- Verifique containers: `sudo -u matrix docker compose -f /opt/matrix/docker-compose.yml ps`
+- Verifique porta publicada do nginx: `sudo -u matrix XDG_RUNTIME_DIR=/run/user/$(id -u matrix) DOCKER_HOST=unix:///run/user/$(id -u matrix)/docker.sock docker compose -f /opt/matrix/docker-compose.yml -p matrix port nginx 80`
