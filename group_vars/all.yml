@@ -48,7 +48,7 @@ element_classic_config_json:
   brand: "Chat"
   mobile_guide_toast: true
   mobile_guide_app_variant: element
-  disable_guests: false
+  disable_guests: true
   default_server_config:
     m.homeserver:
       base_url: "https://{{ matrix_fqdn }}"
